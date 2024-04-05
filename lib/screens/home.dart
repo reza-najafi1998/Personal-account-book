@@ -117,7 +117,10 @@ class _HomeState extends State<Home> {
                                 Column(
                                   children: [
                                     Text(
-                                      
+
+
+
+
                                       weekdayjalali(),
                                       style: themeData.textTheme.subtitle1!
                                           .copyWith(fontSize: 12),
