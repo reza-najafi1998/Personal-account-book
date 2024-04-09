@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.payment">
+    package="ir.rezadev.payment">
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
     <application
-        android:label="payment"
+        android:label="حساب نویس"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

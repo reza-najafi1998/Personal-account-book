@@ -1,4 +1,4 @@
-package com.example.payment
+package ir.rezadev.payment
 
 import io.flutter.embedding.android.FlutterActivity
 

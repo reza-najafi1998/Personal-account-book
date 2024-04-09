@@ -70,10 +70,19 @@ class _RemoveAccountsState extends State<RemoveAccounts> {
                 hesab: hesab,
               )
                   : Padding(
-                padding: const EdgeInsets.only(top: 32),
-                child: Image.asset(
-                  'assets/images/png/empty_list.png',
-                  scale: 2,
+                padding: const EdgeInsets.only(top: 64),
+                child: Column(
+
+                  children: [
+                    Image.asset(
+                      'assets/images/png/empty_list.png',
+                      scale: 2,
+                    ),SizedBox(height: 16,)
+                    ,
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text('حسابی یافت نشد.',style: Theme.of(context).textTheme.headline3,))
+                  ],
                 ),
               );
             },

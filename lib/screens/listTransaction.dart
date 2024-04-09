@@ -11,6 +11,7 @@ import '../calculatorHesab.dart';
 
 class ListTransaction extends StatefulWidget {
   const ListTransaction({super.key, required this.id});
+
   final int id;
 
   @override
@@ -19,21 +20,23 @@ class ListTransaction extends StatefulWidget {
 
 class _ListTransactionState extends State<ListTransaction> {
   bool issort = true;
+
   @override
   Widget build(BuildContext context) {
     // final boxtrx = Hive.box<Transactions>('Transactions');
     // final boxacc = Hive.box<Accounts>('Accounts');
     final themeData = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: InkWell(
         onTap: () {
           final transactions = Transactions();
-          transactions.id=widget.id;
+          transactions.id = widget.id;
           Navigator.of(context).push(CupertinoPageRoute(
-            builder: (context) => AddTransaction(trx: transactions,)
-          ));
+              builder: (context) => AddTransaction(
+                    trx: transactions,
+                  )));
         },
         child: Container(
           width: 130,
@@ -62,125 +65,137 @@ class _ListTransactionState extends State<ListTransaction> {
       ),
       body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: themeData.scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
                         decoration: BoxDecoration(
                             color: themeData.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(8)),
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: themeData.scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.circular(8)),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                              child: Row(
-                                children: [
-                                  Directionality(
-                                    textDirection: TextDirection.rtl,
-                                    child: DropdownButton<String>(
-                                      isDense: true,
-                                      hint: Text(
-                                        'مرتب سازی',
-                                        style: themeData.textTheme.subtitle1!
-                                            .copyWith(fontSize: 12),
-                                      ),
-                                      icon: Icon(Icons.arrow_drop_down),
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(fontSize: 10),
-                                      items: <String>['نزولی', 'صعودی']
-                                          .map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value == 'نزولی') {
-                                            issort = false;
-                                          } else if (value == 'صعودی') {
-                                            issort = true;
-                                          }
-                                        });
-                                      },
-                                    ),
+                          padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                          child: Row(
+                            children: [
+                              Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: DropdownButton<String>(
+                                  isDense: true,
+                                  hint: Text(
+                                    'مرتب سازی',
+                                    style: themeData.textTheme.subtitle1!
+                                        .copyWith(fontSize: 12),
                                   ),
-                                ],
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 10),
+                                  items: <String>['نزولی', 'صعودی']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value == 'نزولی') {
+                                        issort = false;
+                                      } else if (value == 'صعودی') {
+                                        issort = true;
+                                      }
+                                    });
+                                  },
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                       ),
-                      Text(
-                        'لیست تراکنش ها',
-                        style: themeData.textTheme.subtitle1!.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Reminder(),));
-                              print('object+++++++++');
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.deepPurpleAccent
-                              ),child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Icon(Icons.alarm,color: Colors.white,size: 45,),
-                              Text('یادآوری',style: themeData.textTheme.headline3!.copyWith(color: Colors.white,fontSize: 25),)
-                            ],),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          //height: MediaQuery.of(context).size.height,
-                          child: ValueListenableBuilder(
-                            valueListenable: boxtrx.listenable(),
-                            builder: (context, value, child) {
-
-                              return _ListBuilderAccounts(
-                                  issort: issort,
-                                  id: widget.id,
-                                  boxtrx: boxtrx,
-                                  boxacc: boxacc,
-                                  themeData: themeData);
-                            },
-                          ),
-                        ),SizedBox(
-                          height: 80,
-                        )
-                      ],
                     ),
                   ),
-                ),
-
-              ],
+                  Text(
+                    'لیست تراکنش ها',
+                    style: themeData.textTheme.subtitle1!
+                        .copyWith(fontWeight: FontWeight.bold, fontSize: 15),
+                  )
+                ],
+              ),
             ),
-          )),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Reminder(),
+                              ));
+                          print('object+++++++++');
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 70,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.deepPurpleAccent),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(
+                                Icons.alarm,
+                                color: Colors.white,
+                                size: 45,
+                              ),
+                              Text(
+                                'یادآوری',
+                                style: themeData.textTheme.headline3!.copyWith(
+                                    color: Colors.white, fontSize: 25),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      //height: MediaQuery.of(context).size.height,
+                      child: ValueListenableBuilder(
+                        valueListenable: boxtrx.listenable(),
+                        builder: (context, value, child) {
+                          return _ListBuilderAccounts(
+                              issort: issort,
+                              id: widget.id,
+                              boxtrx: boxtrx,
+                              boxacc: boxacc,
+                              themeData: themeData);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      )),
     );
   }
 }
@@ -206,40 +221,55 @@ class _ListBuilderAccounts extends StatefulWidget {
 }
 
 class _ListBuilderAccountsState extends State<_ListBuilderAccounts> {
-
   @override
   Widget build(BuildContext context) {
     // final Transactions datax = widget.boxtrx.values.toList()[5];
     //
     // print(' trx -> '+datax.time.toString());
-
-
-    return ListView.builder(
+    final List<Transactions> persontrx = [];
+    for (var data in widget.boxtrx.values.toList()) {
+      if (data.id == widget.id) {
+        persontrx.add(data);
+      }
+    }
+    return persontrx.isNotEmpty? ListView.builder(
       reverse: widget.issort,
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
-      itemCount: widget.boxtrx.values.length,
+      itemCount: persontrx.length,
       itemBuilder: (context, index) {
-        final Transactions data = widget.boxtrx.values.toList()[index];
-
-        return data.id == widget.id
-            ? _ItemHesabList(
+        // final Transactions data = widget.boxtrx.values.toList()[index];
+        final Transactions data = persontrx[index];
+        return  _ItemHesabList(
                 themeData: widget.themeData,
-          trxitem: data,
-              )
-            : const SizedBox();
+                trxitem: data,
+              );
       },
+    ): Padding(
+    padding: const EdgeInsets.only(top: 64),
+    child: Column(
+
+      children: [
+        Image.asset(
+        'assets/images/png/empty_list.png',
+        scale: 2,
+        ),SizedBox(height: 16,)
+        ,
+        Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text('تراکنشی یافت نشد.',style: Theme.of(context).textTheme.headline3,))
+      ],
+    ),
     );
   }
 }
 
 class _ItemHesabList extends StatelessWidget {
-
   final Transactions trxitem;
 
   const _ItemHesabList({
     required this.themeData,
- required this.trxitem,
+    required this.trxitem,
   });
 
   final ThemeData themeData;
@@ -248,7 +278,7 @@ class _ItemHesabList extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onLongPress: () {
-        showAlertDialog(context,trxitem);
+        showAlertDialog(context, trxitem);
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
@@ -315,7 +345,8 @@ class _ItemHesabList extends StatelessWidget {
                             textDirection: TextDirection.rtl,
                             child: Text(
                                 trxitem.description.length > 20
-                                    ? trxitem.description.substring(0, 18) + '...'
+                                    ? trxitem.description.substring(0, 18) +
+                                        '...'
                                     : trxitem.description,
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.black, fontSize: 13)),
@@ -393,7 +424,7 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
   //   child: Text("OK"),
   //   onPressed: () {},
   // );
-final ThemeData themeData=Theme.of(context);
+  final ThemeData themeData = Theme.of(context);
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
     shape: RoundedRectangleBorder(
@@ -421,17 +452,18 @@ final ThemeData themeData=Theme.of(context);
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
+            width: double.infinity,
             decoration: BoxDecoration(
-              color: themeData.colorScheme.secondary.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(15)
-            ),
+                color: themeData.colorScheme.secondary.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(15)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Directionality(
-                      textDirection: TextDirection.rtl, child: Text('توضیحات : ')),
+                      textDirection: TextDirection.rtl,
+                      child: Text('توضیحات : ')),
                   Directionality(
                       textDirection: TextDirection.rtl,
                       child: Text(
@@ -445,8 +477,9 @@ final ThemeData themeData=Theme.of(context);
               ),
             ),
           ),
-          SizedBox(height: 8,),
-
+          SizedBox(
+            height: 8,
+          ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -454,7 +487,7 @@ final ThemeData themeData=Theme.of(context);
                 Flexible(
                   flex: 1,
                   child: InkWell(
-                    onTap: () async{
+                    onTap: () async {
                       await trxitem.delete();
 
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -462,10 +495,9 @@ final ThemeData themeData=Theme.of(context);
                             textDirection: TextDirection.rtl,
                             child: Text('تراکنش با موفقیت حذف شد')),
                       ));
-                      Navigator.pop(context,true);
+                      Navigator.pop(context, true);
                     },
                     child: Container(
-
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.red),
@@ -481,18 +513,18 @@ final ThemeData themeData=Theme.of(context);
                     ),
                   ),
                 ),
-SizedBox(width: 16,),
+                SizedBox(
+                  width: 16,
+                ),
                 Flexible(
                   flex: 1,
                   child: InkWell(
-                    onTap: () async{
+                    onTap: () async {
                       await Navigator.of(context).push(CupertinoPageRoute(
-                          builder: (context) => AddTransaction(trx: trxitem)
-                      ));
+                          builder: (context) => AddTransaction(trx: trxitem)));
                       Navigator.pop(context);
                     },
                     child: Container(
-
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.blue),
@@ -524,7 +556,3 @@ SizedBox(width: 16,),
     },
   );
 }
-
-
-
-
