@@ -7,7 +7,9 @@ import 'package:payment/screens/addPerson.dart';
 import 'package:payment/calculatorHesab.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
-import 'package:shamsi_date/shamsi_date.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+
+// import 'package:shamsi_date/shamsi_date.dart';
 import 'dart:ui' as ui;
 
 import '../data/data.dart';
@@ -38,7 +40,6 @@ String jalaidate = now.toJalali().year.toString() +
     '/' +
     now.toJalali().day.toString();
 
-
 class _HomeState extends State<Home> {
   // @override
   // void initState() {
@@ -63,15 +64,15 @@ class _HomeState extends State<Home> {
             }));
           },
           child: Container(
-            width: 130,
+            width: 134,
             height: 60,
             decoration: BoxDecoration(
                 color: themeData.primaryColor,
                 borderRadius: BorderRadius.circular(18)),
             child: Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.fromLTRB(8, 4, 6, 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'افزودن حساب',
@@ -144,7 +145,8 @@ class _HomeState extends State<Home> {
                                       Directionality(
                                         textDirection: ui.TextDirection.rtl,
                                         child: Text(
-                                          boxdatauser.values.toList()[0].name + ' جان ، خوش آمدید',
+                                          boxdatauser.values.toList()[0].name +
+                                              ' جان ، خوش آمدید',
                                           style: themeData.textTheme.subtitle1,
                                         ),
                                       ),
@@ -289,12 +291,17 @@ class _HomeState extends State<Home> {
                     child: Directionality(
                       textDirection: ui.TextDirection.rtl,
                       child: TextField(
+                        onTap: () {
+                          _controller.selection = TextSelection.fromPosition(
+                              TextPosition(offset: _controller.text.length));
+                        },
                         onChanged: (value) {
                           setState(() {
                             searchKeywordNotifier.value = _controller.text;
                           });
                         },
                         controller: _controller,
+
                         decoration: InputDecoration(
                             hintTextDirection: ui.TextDirection.rtl,
                             border: InputBorder.none,

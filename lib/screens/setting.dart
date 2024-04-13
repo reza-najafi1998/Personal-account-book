@@ -7,9 +7,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
 import 'package:payment/screens/removeAccounts.dart';
-import 'package:payment/screens/test.dart';
+import 'package:payment/services/saveFile.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shamsi_date/shamsi_date.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+// import 'package:shamsi_date/shamsi_date.dart';
 
 class Settingpage extends StatelessWidget {
   @override

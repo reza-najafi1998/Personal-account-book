@@ -6,7 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart'as intl;
 import 'package:payment/data/data.dart';
-import 'package:shamsi_date/shamsi_date.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+// import 'package:shamsi_date/shamsi_date.dart';
 
 class AddTransaction extends StatefulWidget {
   const AddTransaction({super.key, required this.trx});
@@ -68,7 +69,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
-                    
+
                     controller: _nameTxt,
                     enabled: false,
                     textAlign: TextAlign.right,

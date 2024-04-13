@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:payment/screens/addReminder.dart';
 import 'package:payment/screens/addTransaction.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
-import 'package:payment/screens/reminder.dart';
-
-import '../calculatorHesab.dart';
 
 class ListTransaction extends StatefulWidget {
   const ListTransaction({super.key, required this.id});
@@ -39,19 +36,20 @@ class _ListTransactionState extends State<ListTransaction> {
                   )));
         },
         child: Container(
-          width: 130,
+          width: 138,
           height: 60,
           decoration: BoxDecoration(
               color: themeData.primaryColor,
               borderRadius: BorderRadius.circular(18)),
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.fromLTRB(8, 4, 6, 4),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'افزودن حساب',
-                  style: themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
+                  'افزودن تراکنش',
+                  style:
+                  themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
                 ),
                 const Icon(
                   CupertinoIcons.plus_circle,
@@ -143,9 +141,8 @@ class _ListTransactionState extends State<ListTransaction> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Reminder(),
+                                builder: (context) => AddReminder(id: widget.id),
                               ));
-                          print('object+++++++++');
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width,
@@ -162,7 +159,7 @@ class _ListTransactionState extends State<ListTransaction> {
                                 size: 45,
                               ),
                               Text(
-                                'یادآوری',
+                                'ثبت یادآور',
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.white, fontSize: 25),
                               )

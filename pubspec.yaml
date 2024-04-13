@@ -40,11 +40,14 @@ dependencies:
   http: ^0.13.6
   hive_flutter: ^1.1.0
   intl: ^0.18.1
-  shamsi_date: ^1.0.2
+#  shamsi_date: ^1.0.2
   fl_chart: ^0.62.0
   permission_handler: ^11.0.1
   file_picker: ^5.3.1
   path_provider: ^2.1.1
+  flutter_datetime_picker: ^1.5.1
+  flutter_local_notifications: ^17.0.0
+  persian_datetime_picker: ^2.6.0
 
 
 
@@ -92,6 +95,10 @@ flutter:
   fonts:
     - family: IRANSans
       fonts:
+        - asset: assets/fonts/Dana.ttf
+        - asset: assets/fonts/CustomFontIcon.ttf
+        - asset: assets/fonts/IRANYekanMobileLight.ttf
+        - asset: assets/fonts/IRANYekanMobileRegular.ttf
         - asset: assets/fonts/IRANSans_Black.ttf
           weight: 700
         - asset: assets/fonts/IRANSans_Medium.ttf
