@@ -140,7 +140,6 @@ class Settingpage extends StatelessWidget {
 
                     List<int> bytes = jsonString.codeUnits;
                     saveFile(filename, bytes);
-                    print('1111111111111111->  ' + bytes.toList().toString());
 
                     // final file =
                     //     File(selectedDirectory + '/' + filename + '.txt');

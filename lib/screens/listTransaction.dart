@@ -140,7 +140,7 @@ class _ListTransactionState extends State<ListTransaction> {
                         onTap: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(
+                              CupertinoPageRoute(
                                 builder: (context) => AddReminder(id: widget.id),
                               ));
                         },

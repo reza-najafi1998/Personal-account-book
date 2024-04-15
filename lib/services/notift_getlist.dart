@@ -32,4 +32,10 @@ class NotificationHelper {
     await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     return pendingNotifications;
   }
+
+  // Delete a scheduled notification by id
+  Future<void> cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
 }

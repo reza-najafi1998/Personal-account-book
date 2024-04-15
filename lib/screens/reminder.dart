@@ -1,111 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:payment/data/data.dart';
 import 'package:payment/screens/addReminder.dart';
 import 'package:payment/services/notift_getlist.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import  'package:persian_number_utility/persian_number_utility.dart';
 
-class Reminder extends StatelessWidget {
-  final int id;
+//List<PendingNotificationRequest> pendingNotifications = [];
 
-  Reminder({super.key, required this.id});
+ValueNotifier<List<PendingNotificationRequest>> pendingNotifications =
+    ValueNotifier<List<PendingNotificationRequest>>([]);
 
-  @override
-  Widget build(BuildContext context) {
-    // Initialize NotificationHelper
-    NotificationHelper notificationHelper = NotificationHelper();
-    notificationHelper.initialize();
+NotificationHelper notificationHelper = NotificationHelper();
 
-    final ThemeData themeData = Theme.of(context);
-
-    return Scaffold(
-      floatingActionButton: InkWell(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddReminder(id: id)));
-        },
-        child: Container(
-          width: 150,
-          height: 60,
-          decoration: BoxDecoration(
-              color: themeData.primaryColor,
-              borderRadius: BorderRadius.circular(18)),
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(
-                  'افزودن یادآوری',
-                  style: themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
-                ),
-                const Icon(
-                  CupertinoIcons.plus_circle,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      backgroundColor: themeData.colorScheme.background,
-      body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 16,
-            ),
-            MyHomePage(notificationHelper: notificationHelper),
-            Container(
-              width: double.infinity,
-              height: 60,
-              decoration: BoxDecoration(
-                  color: themeData.colorScheme.secondary.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(20)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('ساعت : 10:00:00'),
-                      Text('تاریخ : 1403/01/21'),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('عنوان : حقوق گرفته'),
-                      Text('تاریخ ثبت یاد آور : 1403/01/03'),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      )),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  final NotificationHelper notificationHelper;
-
-  MyHomePage({required this.notificationHelper});
+class Reminder extends StatefulWidget {
+  const Reminder({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<Reminder> createState() => _ReminderState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<PendingNotificationRequest> pendingNotifications = [];
+class _ReminderState extends State<Reminder> {
+  bool issort = true;
 
   @override
   void initState() {
     super.initState();
+    notificationHelper.initialize();
     // Retrieve pending notifications when the widget is initialized
     _retrievePendingNotifications();
   }
@@ -114,27 +37,460 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _retrievePendingNotifications() async {
     // Get pending notifications using the NotificationHelper instance
     List<PendingNotificationRequest> notifications =
-        await widget.notificationHelper.getPendingNotifications();
+        await notificationHelper.getPendingNotifications();
     setState(() {
-      pendingNotifications = notifications;
+      pendingNotifications.value = notifications;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 500,
-      height: 300,
-      child: ListView.builder(
-        itemCount: pendingNotifications.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(pendingNotifications[index].title.toString()),
-            subtitle: Text(':  ${pendingNotifications[index].payload}'),
+    // final boxtrx = Hive.box<Transactions>('Transactions');
+    // final boxacc = Hive.box<Accounts>('Accounts');
+    final themeData = Theme.of(context);
 
-          );
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: themeData.scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: themeData.scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                          child: Row(
+                            children: [
+                              Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: DropdownButton<String>(
+                                  isDense: true,
+                                  hint: Text(
+                                    'مرتب سازی',
+                                    style: themeData.textTheme.subtitle1!
+                                        .copyWith(fontSize: 12),
+                                  ),
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 10),
+                                  items: <String>['زمان ایجاد', 'اولویت نمایش']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value == 'زمان ایجاد') {
+                                        issort = false;
+                                      } else if (value == 'اولویت نمایش') {
+                                        issort = true;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'لیست یادآور های در انتظار',
+                        style: themeData.textTheme.subtitle1!.copyWith(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Icon(Icons.notifications_active_outlined)
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      //height: MediaQuery.of(context).size.height,
+                      child: ValueListenableBuilder<
+                              List<PendingNotificationRequest>>(
+                          // گوش دادن به تغییرات در ValueNotifier
+                          valueListenable: pendingNotifications,
+                          builder: (context, notifications, child) {
+
+                            return
+                              pendingNotifications.value.isNotEmpty?
+                              ListView.builder(
+                              physics: const ClampingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: pendingNotifications.value.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Itemlist(
+                                    themeData: themeData,
+                                    titleNotify: pendingNotifications
+                                        .value[index].title
+                                        .toString(),
+                                    bodyNotify: pendingNotifications
+                                        .value[index].body
+                                        .toString(),
+                                    payloadNotify: pendingNotifications
+                                        .value[index].payload
+                                        .toString(),
+                                    personid:
+                                        pendingNotifications.value[index].id,
+
+                                  onDelete: (int id) {
+                                      setState(() {
+                                        notificationHelper.cancelNotification(pendingNotifications.value[index].id);
+                                        pendingNotifications.value.removeWhere((notification) => notification.id == id);
+                                        // print(pendingNotifications.value[index].id)
+                                        Navigator.pop(context);
+                                      });
+                                  },);
+                              },
+                            ):
+                              Padding(
+                                padding: const EdgeInsets.only(top: 64),
+                                child: Column(
+
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/png/empty_list.png',
+                                      scale: 2,
+                                    ),SizedBox(height: 16,)
+                                    ,
+                                    Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child: Text('یادآوری یافت نشد.',style: Theme.of(context).textTheme.headline3,))
+                                  ],
+                                ),
+                              );
+                          }),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      )),
+    );
+  }
+}
+typedef DeleteCallback = void Function(int id);
+
+class Itemlist extends StatelessWidget {
+  final ThemeData themeData;
+  final int personid;
+  final String titleNotify;
+  final String bodyNotify;
+  final DeleteCallback onDelete;
+
+
+
+  //datetime set in payload as string
+  final String payloadNotify;
+
+  const Itemlist(
+      {super.key,
+      required this.themeData,
+      required this.titleNotify,
+      required this.bodyNotify,
+      required this.payloadNotify,
+      required this.personid,
+        required this.onDelete});
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    final box = Hive.box<Accounts>('Accounts');
+    String personName = box.values
+        .toList()
+        .firstWhere((element) => element.id == personid)
+        .name
+        .toString();
+
+    DateTime notifydatetimemiladi=
+    DateTime(
+        int.parse(payloadNotify.substring(0,4)),
+        int.parse(payloadNotify.substring(5,7)),
+        int.parse(payloadNotify.substring(8,10)),
+        int.parse(payloadNotify.substring(11,13)),
+        int.parse(payloadNotify.substring(14,16)),
+    );
+
+    TimeOfDay notifyTime=TimeOfDay(hour: notifydatetimemiladi.hour, minute: notifydatetimemiladi.minute);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+         deletenotify(context, themeData, personid, titleNotify);
         },
+        child: Container(
+          width: double.infinity,
+          height: 108,
+          decoration: BoxDecoration(
+              color: themeData.scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(0),
+                width: 50,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 246, 28, 4),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20))),
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.delete_solid,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      Text(
+                        'حذف',
+                        style: themeData.textTheme.headline3!
+                            .copyWith(color: Colors.white, fontSize: 14),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          titleNotify,
+                          style: themeData.textTheme.subtitle1!
+                              .copyWith(fontSize: 15),
+                        ),
+                        Text(' : عنوان',
+                            style: themeData.textTheme.subtitle1!.copyWith(
+                                fontWeight: FontWeight.w600, fontSize: 15)),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color:
+                              themeData.colorScheme.secondary.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: SizedBox(
+                              width: 290,
+                              child: Text(
+                                bodyNotify != ''
+                                    ? 'توضیحات : ' + bodyNotify
+                                    : 'توضیحات : ندارد!',
+                                style: themeData.textTheme.subtitle1!.copyWith(
+                                    fontWeight: FontWeight.w400, fontSize: 12),
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.justify,
+                              ),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      children: [
+                        Row(
+                          children: [
+                            Text(notifydatetimemiladi.toPersianDate(),
+                              style: themeData.textTheme.subtitle1!
+                                  .copyWith(fontSize: 11),
+                            ),
+                            Text(
+                              ' : تاریخ',
+                              style: themeData.textTheme.subtitle1!
+                                  .copyWith(fontSize: 12),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.date_range_outlined,
+                              size: 18,
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              fixmonthdate(notifyTime.hour.toString())+" : "+fixmonthdate(notifyTime.minute.toString()),
+                              style: themeData.textTheme.subtitle1!
+                                  .copyWith(fontSize: 12),
+                            ),
+                            Text(
+                              ' : ساعت',
+                              style: themeData.textTheme.subtitle1!
+                                  .copyWith(fontSize: 12),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.access_time_outlined,
+                              size: 18,
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
+
+
+  deletenotify(BuildContext context, ThemeData themeData, int id, String title) {
+    AlertDialog alert = AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
+      titlePadding: EdgeInsets.all(0),
+      title: Container(
+          width: double.infinity,
+          height: 45,
+          decoration: BoxDecoration(
+              color: Colors.deepPurpleAccent,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+          child: Center(child: Text('حذف یاد آور'))),
+      //actionsAlignment: MainAxisAlignment.start,
+      titleTextStyle: themeData.textTheme.headline3!
+          .copyWith(color: Colors.white, fontSize: 18),
+      contentPadding: const EdgeInsets.all(8),
+      actions: [
+        SizedBox(
+          height: 16,
+        ),
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.error,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    'حذف یادآور "$title" .',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black),
+                  ),
+                ],
+              )),
+        ),
+        TextButton(
+            onPressed: () async {
+              onDelete(personid);
+
+             // notificationHelper.cancelNotification(personid);
+
+              print(pendingNotifications.value.length);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Text('یادآور با موفقیت حذف شد')),
+              ));
+            },
+            child: Container(
+                //height: 50,
+                //width: 150,
+                decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(15)),
+                child: Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'حذف',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 20, color: Colors.white),
+                  ),
+                ))))
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+}
+
+
+
+
+
+
+String replaceFarsiNumber(String input) {
+  const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const farsi = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+  for (int i = 0; i < english.length; i++) {
+    input = input.replaceAll(english[i], farsi[i]);
+  }
+
+  return input;
 }

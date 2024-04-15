@@ -4,24 +4,19 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart' as intl;
 
-
 import 'package:payment/data/data.dart';
+import 'package:payment/screens/home.dart';
 import 'package:payment/services/notif_service.dart';
+import 'package:payment/services/time_picker.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
-
-// var nowdate = new DateTime.now();
-// var formatter = new intl.DateFormat('yyyy-MM-dd');
-// Gregorian g = Gregorian(nowdate.year, nowdate.month, nowdate.day);
-//
-
+import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:flutter_linear_datepicker/flutter_datepicker.dart';
 
 final timeFormatter = intl.DateFormat('HH:mm:ss');
 final DateTime now = DateTime.now();
-
-
-String _jalalidate =
-    '${Jalali.now().year}/${Jalali.now().month}/${Jalali.now().day}';
-String _time =timeFormatter.format(now);
+TimeOfDay selectedTime = TimeOfDay.now();
+String jalaliselected =
+    '${Jalali.now().year}/${fixmonthdate(Jalali.now().month.toString())}/${Jalali.now().day}';
 
 class AddReminder extends StatefulWidget {
   const AddReminder({super.key, required this.id});
@@ -35,18 +30,19 @@ class AddReminder extends StatefulWidget {
 class _AddReminderState extends State<AddReminder> {
   final TextEditingController _nameTxt = TextEditingController();
   final TextEditingController _infoTxt = TextEditingController();
-  Jalali jalaliselected = Jalali.now();
   var settime =
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
 
   final box = Hive.box<Accounts>('Accounts');
 
-
-
   @override
   void initState() {
-    _nameTxt.text=box.values.toList().firstWhere((element) => element.id==widget.id).name;
-    print(_jalalidate);
+    settime =
+        TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
+    _nameTxt.text = box.values
+        .toList()
+        .firstWhere((element) => element.id == widget.id)
+        .name;
     super.initState();
   }
 
@@ -108,144 +104,265 @@ class _AddReminderState extends State<AddReminder> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () async {
-                            jalaliselected = (await showPersianDatePicker(
-                              context: context,
-                              initialDate: Jalali.now(),
-                              firstDate: Jalali(Jalali.now().year,
-                                  Jalali.now().month, Jalali.now().day),
-                              lastDate: Jalali(Jalali.now().year + 10, 12),
-                            ))!;
-                            setState(() {
-                              final picked = this.jalaliselected;
-                              if (picked != null) {
-                                _jalalidate = picked.year.toString() +
-                                    '/' +
-                                    picked.month.toString() +
-                                    '/' +
-                                    picked.day.toString();
-                              }
-                            });
-                          },
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  showDateDialog(
+                    context,
+                    themeData,
+                    jalaliselected,
+                    (dateselected) {
+                      setState(() {
+                        jalaliselected = dateselected;
+                      });
+                    },
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border:
+                          Border.all(color: themeData.colorScheme.secondary)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 3, 0, 0),
                           child: Text(
-                            'تنظیم تاریخ',
-                            style: themeData.textTheme.headline3!
-                                .copyWith(color: Colors.white),
-                          )),
-                      Row(
-                        children: [
-                          Text(
-                            'تاریخ : ' + _jalalidate,
-                            style: themeData.textTheme.headline3!
-                                .copyWith(color: Colors.black),
+                            jalaliselected.toPersianDigit(),
+                            style: themeData.textTheme.subtitle1,
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Image.asset(
-                            'assets/images/png/calender.png',
-                            width: 45,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () async {
-                            settime = (await showPersianTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
+                        ),
 
-                            ))!;
-                            setState(() {
-                              _time = settime.hour.toString() +
-                                  ':' +
-                                  settime.minute.toString();
-                            });
-                          },
-                          child: Text(
-                            'تنظیم ساعت',
-                            style: themeData.textTheme.headline3!
-                                .copyWith(color: Colors.white),
-                          )),
-                      Row(
-                        children: [
-                          Text(
-                            'ساعت : ' + _time,
-                            style: themeData.textTheme.headline3!
-                                .copyWith(color: Colors.black),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Image.asset(
-                            'assets/images/png/time.png',
-                            width: 45,
-                          ),
-                        ],
-                      ),
-                    ],
+                        // ElevatedButton(
+                        //     onPressed: () async {
+                        //       jalaliselected = (await showPersianDatePicker(
+                        //         context: context,
+                        //         initialDate: Jalali.now(),
+                        //         firstDate: Jalali(Jalali.now().year,
+                        //             Jalali.now().month, Jalali.now().day),
+                        //         lastDate: Jalali(Jalali.now().year + 10, 12),
+                        //       ))!;
+                        //       setState(() {
+                        //         final picked = this.jalaliselected;
+                        //         if (picked != null) {
+                        //           _jalalidate = picked.year.toString() +
+                        //               '/' +
+                        //               picked.month.toString() +
+                        //               '/' +
+                        //               picked.day.toString();
+                        //         }
+                        //       });
+                        //     },
+                        //     child: Text(
+                        //       'تنظیم تاریخ',
+                        //       style: themeData.textTheme.headline3!
+                        //           .copyWith(color: Colors.white),
+                        //     )),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text(
+                                'انتخاب تاریخ مورد نظر',
+                                style: themeData.textTheme.headline3!
+                                    .copyWith(color: Colors.black),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.date_range_rounded,
+                              color: Color(0xff8d8c8c),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                  //width: 170,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: themeData.colorScheme.secondary),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Text('${fixmonthdate(settime.hour.toString())} : ${fixmonthdate(settime.minute.toString())}'.toPersianDigit(),style: themeData.textTheme.subtitle1,),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: Text(
+                                    'انتخاب زمان :',
+                                    style: themeData.textTheme.headline3!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                // Image.asset(
+                                //   'assets/images/png/time.png',
+                                //   width: 45,
+                                // ),
+                                Icon(
+                                  Icons.watch_later_outlined,
+                                  size: 25,
+                                  color: Color(0xff8d8c8c),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        height: 16,
+                      ),
+                      TimePickerSpinner(
+                        locale: const Locale('en', ''),
+                        time: now,
+                        is24HourMode: true,
+                        isShowSeconds: false,
+                        itemHeight: 40,
+                        itemWidth: 30,
+                        normalTextStyle: themeData.textTheme.subtitle1,
+                        highlightedTextStyle: themeData.textTheme.subtitle1,
+                        // const TextStyle(fontSize: 24, color: Colors.blue),
+                        isForce2Digits: true,
+                        onTimeChange: (time) {
+                          setState(() {
+                            settime=TimeOfDay(hour: time.hour, minute: time.minute);
+                          });
+                        },
+                      ),
+                    ],
+                  )),
+              SizedBox(height: 16,),
               InkWell(
                 onTap: () async {
+                  print(settime);
+                  Jalali x = Jalali(
+                      int.parse(jalaliselected.substring(0, 4)),
+                      int.parse(jalaliselected.substring(5, 7)),
+                      int.parse(jalaliselected.substring(8, 10)));
 
+                  Gregorian miladidate = x.toGregorian();
+                  DateTime scheduleTime = DateTime(
+                      miladidate.year,
+                      miladidate.month,
+                      miladidate.day,
+                      settime.hour,
+                      settime.minute,
+                      0,
+                      0,
+                      0);
+                  DateTime datenow = DateTime.now();
 
+                  int checktime = datenow.compareTo(scheduleTime);
 
-                  //showAlertDialog(context, 'لطفا صبر کنید');
-                  int orgtime = (settime.hour *60)+settime.minute;
-                  int nowtime = (DateTime.now().hour *60)+DateTime.now().minute;
-
-
-                  if (orgtime>nowtime) {
-                    Gregorian  miladidate=jalaliselected.toGregorian();
-                    DateTime scheduleTime=DateTime(miladidate.year,miladidate.month,miladidate.day,settime.hour,settime.minute,0,0,0);
-
-
+                  if (checktime < 0) {
                     NotificationService().scheduleNotification(
-                      id: widget.id,
-                        title:_nameTxt.text+ ' یاد آوری حساب ',
+                        id: widget.id,
+                        title: _nameTxt.text + ' یاد آوری حساب ',
                         body: _infoTxt.text,
                         payLoad: scheduleTime.toString(),
                         scheduledNotificationDateTime: scheduleTime);
 
-                    // NotificationService().showNotification(body: 'sss',title: 'sdsd', id: 15);
-
-                    // final transactions = Transactions();
-                    //
-                    // Navigator.of(context).pop();
-                    //
-                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //   content: Directionality(
-                    //       textDirection: TextDirection.rtl,
-                    //       child: Text('مقادیر خالی است')),
-                    // ));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Text('یادآور با موفقیت ثبت شد.')),
+                    ));
+                    Navigator.pop(context);
+                  } else if (checktime > 0) {
+                    // $scheduleTime < datetime.now
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Text(
+                              'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
+                    ));
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Directionality(
                           textDirection: TextDirection.rtl,
                           child: Text(
                               'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
                     ));
                   }
+
+                  // if(scheduleTime.year>=datenow.year){
+                  //   if(scheduleTime.month>=datenow.month){
+                  //     if(scheduleTime.day>=datenow.day){
+                  //
+                  //       int orgtime = (settime.hour *60)+settime.minute;
+                  //       int nowtime = (DateTime.now().hour *60)+DateTime.now().minute;
+                  //
+                  //       if (scheduleTime.year>datenow.year|| scheduleTime.month>=datenow.month || scheduleTime.day>=datenow.day && orgtime>nowtime) {
+                  //         NotificationService().scheduleNotification(
+                  //             id: widget.id,
+                  //             title:_nameTxt.text+ ' یاد آوری حساب ',
+                  //             body: _infoTxt.text,
+                  //             payLoad: scheduleTime.toString(),
+                  //             scheduledNotificationDateTime: scheduleTime);
+                  //       } else {
+                  //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //           content: Directionality(
+                  //               textDirection: TextDirection.rtl,
+                  //               child: Text(
+                  //                   'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
+                  //         ));
+                  //       }
+                  //     }else{
+                  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //         content: Directionality(
+                  //             textDirection: TextDirection.rtl,
+                  //             child: Text(
+                  //                 'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
+                  //       ));
+                  //     }
+                  //   }else{
+                  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //       content: Directionality(
+                  //           textDirection: TextDirection.rtl,
+                  //           child: Text(
+                  //               'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
+                  //     ));
+                  //   }
+                  // }else{
+                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //     content: Directionality(
+                  //         textDirection: TextDirection.rtl,
+                  //         child: Text(
+                  //             'برای ثبت یاد آور زمانی در آینده انتخاب کنید.')),
+                  //   ));
+                  // }
+                  //showAlertDialog(context, 'لطفا صبر کنید');
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -267,12 +384,6 @@ class _AddReminderState extends State<AddReminder> {
     );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-
-//   }
-// }
 
 showAlertDialog(BuildContext context, String text) {
   AlertDialog alert = AlertDialog(
@@ -302,4 +413,107 @@ showAlertDialog(BuildContext context, String text) {
       return alert;
     },
   );
+}
+
+typedef setdate = void Function(String dateselected);
+
+showDateDialog(BuildContext context, ThemeData themeData, String jalaliNowDate,
+    setdate onsetdateselected) {
+  String selectdatejalali = '';
+  AlertDialog alert = AlertDialog(
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16))),
+    titlePadding: EdgeInsets.all(0),
+    title: Container(
+        width: double.infinity,
+        height: 45,
+        decoration: BoxDecoration(
+            color: Colors.deepPurpleAccent,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        child: Center(child: Text('تاریخ را انتخاب کنید'))),
+    //actionsAlignment: MainAxisAlignment.start,
+    titleTextStyle: themeData.textTheme.headline3!
+        .copyWith(color: Colors.white, fontSize: 18),
+    contentPadding: const EdgeInsets.all(8),
+    actions: [
+      SizedBox(
+        height: 16,
+      ),
+      LinearDatePicker(
+          endDate: "1408/12/29",
+          initialDate: jalaliNowDate,
+          addLeadingZero: true,
+          dateChangeListener: (String selectedDate) {
+            selectdatejalali = selectedDate;
+          },
+          showDay: true,
+          //false -> only select year & month
+          labelStyle: TextStyle(
+            fontFamily: 'IRANSans',
+            fontSize: 14.0,
+            color: Colors.black,
+          ),
+          selectedRowStyle: TextStyle(
+            fontFamily: 'IRANSans',
+            fontSize: 18.0,
+            color: Colors.deepOrange,
+          ),
+          unselectedRowStyle: TextStyle(
+            fontFamily: 'IRANSans',
+            fontSize: 16.0,
+            color: Colors.blueGrey,
+          ),
+          yearText: "سال",
+          monthText: "ماه",
+          dayText: "روز",
+          showLabels: true,
+          // to show column captions, eg. year, month, etc.
+          columnWidth: 80,
+          showMonthName: true,
+          isJalaali: true // false -> Gregorian
+          ),
+      TextButton(
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: () async {
+            onsetdateselected(selectdatejalali);
+            Navigator.pop(context);
+          },
+          child: Container(
+              //height: 50,
+              //width: 150,
+              decoration: BoxDecoration(
+                  color: themeData.primaryColor,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'ثبت',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              ))))
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+String fixmonthdate(String month) {
+  if (month.length <= 1) {
+    return '0' + month;
+  } else {
+    return month;
+  }
 }

@@ -7,6 +7,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart'as intl;
 import 'package:payment/data/data.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import  'package:persian_number_utility/persian_number_utility.dart';
+
 // import 'package:shamsi_date/shamsi_date.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -32,7 +34,7 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   void initState() {
     _infoTxt.text=widget.trx.description;
-    _amountTxt.text=widget.trx.price==0?'':widget.trx.price.toString();
+    _amountTxt.text=widget.trx.price==0?'':widget.trx.price.toString().seRagham();
     isswitch=widget.trx.status;
     super.initState();
   }
@@ -121,14 +123,22 @@ class _AddTransactionState extends State<AddTransaction> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onChanged: (value) {
+                      print(value);
+                      if(value.isNotEmpty && value.substring(0,1)=='0'){
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text('عدد صفر ابتدای مبلغ درج نخواهد شد')),
+                        ));
+                      }
+                    },
                     controller: _amountTxt,
                     maxLength: 15,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-                    ],                    decoration: InputDecoration(
-
+                    inputFormatters: [CustomAmountFormatter()],
+                    decoration: InputDecoration(
                         label: Text('مبلغ حساب'),
                         prefixIcon: Icon(Icons.attach_money_rounded),
                         border: OutlineInputBorder(
@@ -136,6 +146,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                 child: Directionality(
@@ -158,7 +169,10 @@ class _AddTransactionState extends State<AddTransaction> {
                 onTap: () async{
                   showAlertDialog(context, 'لطفا صبر کنید');
 
-                  if(_amountTxt.text.isNotEmpty) {
+                  String outputString = _amountTxt.text.replaceAll(',', ''); // حذف تمام ویرگول‌ها
+
+
+                  if(outputString.isNotEmpty) {
                     final transactions = Transactions();
                     var now = new DateTime.now();
                     var formatter = new intl.DateFormat('yyyy-MM-dd');
@@ -166,7 +180,7 @@ class _AddTransactionState extends State<AddTransaction> {
 
 
                     widget.trx.status = isswitch;
-                    widget.trx.price = int.parse(_amountTxt.text);
+                    widget.trx.price = int.parse(outputString);
                     widget.trx.description = _infoTxt.text;
 
                     final Box<Transactions> box = Hive.box('transactions');
@@ -255,3 +269,31 @@ showAlertDialog(BuildContext context, String text) {
     },
   );
 }
+
+class CustomAmountFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Remove any non-digit characters from the new value
+    String cleanText = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
+    // Add a comma every three digits from the right
+    String formattedText = '';
+    for (int i = cleanText.length; i > 0; i -= 3) {
+      int endIndex = i;
+      int startIndex = i - 3;
+      if (startIndex < 0) {
+        startIndex = 0;
+      }
+      String segment = cleanText.substring(startIndex, endIndex);
+      formattedText = segment + (formattedText.isEmpty ? '' : ',') + formattedText;
+    }
+
+    // Return the new value with comma-separated digits
+    return newValue.copyWith(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
+    );
+  }
+}
+
