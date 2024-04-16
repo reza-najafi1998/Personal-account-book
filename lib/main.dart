@@ -3,11 +3,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/screens/splash.dart';
+import 'package:payment/services/notif_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
 
 const userBoxName='User';
 const userBoxTransactions='Transactions';
 const userBoxAccounts='Accounts';
+
+
 void main() async{
+  //---notify setting
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
+  tz.initializeTimeZones();
+//-------------
       var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
     String formattedDate = formatter.format(now);
@@ -44,6 +54,7 @@ class MyApp extends StatelessWidget {
           onSecondary: Colors.black
         ),
         textTheme: TextTheme(
+            //headlineSmall: TextStyle(fontFamily: fontName,fontSize: 14),
           subtitle2: TextStyle(fontFamily: fontName,fontSize: 17,color:Theme.of(context).colorScheme.onPrimary ),
           subtitle1: TextStyle(fontFamily: fontName,fontSize: 17,color:Colors.black ),
           headline3: TextStyle(fontFamily: fontName,fontSize: 14)
