@@ -7,6 +7,7 @@ import 'package:payment/screens/addPerson.dart';
 import 'package:payment/calculatorHesab.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
+import 'package:payment/widgets/draverWidget.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 // import 'package:shamsi_date/shamsi_date.dart';
@@ -56,7 +57,10 @@ class _HomeState extends State<Home> {
       // print(hesab.bedehi().toString());
       name = datauserdata.name.toString();
     });
+
     return Scaffold(
+        endDrawer: MyDrawer(nameUser: boxdatauser.values.toList()[0].name,),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: InkWell(
           onTap: () {
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
@@ -64,271 +68,287 @@ class _HomeState extends State<Home> {
             }));
           },
           child: Container(
-            width: 134,
-            height: 60,
+            width: 150,
+            height: 50,
             decoration: BoxDecoration(
-                color: themeData.primaryColor,
-                borderRadius: BorderRadius.circular(18)),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 6, 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'افزودن حساب',
-                    style:
-                        themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
-                  ),
-                  const Icon(
-                    CupertinoIcons.plus_circle,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ],
-              ),
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(30)),
+            child: Row(
+mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'افزودن حساب',
+                  style:
+                  themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
+                ),                SizedBox(width: 8,)
+                ,const Icon(
+                  CupertinoIcons.plus_circle,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ],
             ),
           ),
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 8,
-                width: MediaQuery.of(context).size.width,
-                // width: ,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Container(
-                  width: double.infinity,
-                  height: 220,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      weekdayjalali(),
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                    Text(
-                                      replaceFarsiNumber(jalaidate),
-                                      style: themeData.textTheme.headline3,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Image.asset(
-                                  'assets/images/png/calender.png',
-                                  scale: 7,
-                                ),
-                              ],
-                            ),
-                            ValueListenableBuilder(
-                                valueListenable: boxdatauser.listenable(),
-                                builder: (context, valuee, child) {
-                                  return Row(
-                                    children: [
-                                      Directionality(
-                                        textDirection: ui.TextDirection.rtl,
-                                        child: Text(
-                                          boxdatauser.values.toList()[0].name +
-                                              ' جان ، خوش آمدید',
-                                          style: themeData.textTheme.subtitle1,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      Image.asset(
-                                        'assets/images/png/user.png',
-                                        scale: 7,
-                                      ),
-                                    ],
-                                  );
-                                }),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: boxtrx.listenable(),
-                          builder: (context, valuee, child) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text('تومان',
-                                            style:
-                                                themeData.textTheme.headline3),
-                                        const SizedBox(
-                                          width: 3,
-                                        ),
-                                        Text(
-                                          replaceFarsiNumber(
-                                              value.format(hesab.talab())),
-                                          style: themeData.textTheme.subtitle2!
-                                              .copyWith(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            color: const Color(0xff00f53f),
-                                          ),
-                                          child: Image.asset(
-                                            'assets/images/png/up.png',
-                                            scale: 3,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('تومان',
-                                            style:
-                                                themeData.textTheme.headline3),
-                                        const SizedBox(
-                                          width: 3,
-                                        ),
-                                        Text(
-                                          replaceFarsiNumber(
-                                              value.format(hesab.bedehi())),
-                                          style: themeData.textTheme.subtitle2!
-                                              .copyWith(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            color: const Color(0xfff82442),
-                                          ),
-                                          child: Image.asset(
-                                            'assets/images/png/down.png',
-                                            scale: 3,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                SizedBox(
-                                    width: 130,
-                                    height: 130,
-                                    child: MyPieChart(
-                                      talab: hesab.talab().toDouble(),
-                                      bedehi: hesab.bedehi().toDouble(),
-                                      themeData: themeData,
-                                    ))
-
-                                // Image.asset(
-                                //   'assets/images/png/chart.png',
-                                //   scale: 3,
-                                // ),
-                                //Image.asset('assets/images/png/arrow.png')
-                              ],
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 8,
+                  width: MediaQuery.of(context).size.width,
+                  // width: ,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                child: Container(
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Container(
+                    width: double.infinity,
+                    height: 220,
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 175, 5, 167),
-                          width: 2)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Directionality(
-                      textDirection: ui.TextDirection.rtl,
-                      child: TextField(
-                        onTap: () {
-                          _controller.selection = TextSelection.fromPosition(
-                              TextPosition(offset: _controller.text.length));
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            searchKeywordNotifier.value = _controller.text;
-                          });
-                        },
-                        controller: _controller,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        weekdayjalali(),
+                                        style: themeData.textTheme.subtitle1!
+                                            .copyWith(fontSize: 12),
+                                      ),
+                                      Text(
+                                        replaceFarsiNumber(jalaidate),
+                                        style: themeData.textTheme.headline3,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Image.asset(
+                                    'assets/images/png/calender.png',
+                                    scale: 7,
+                                  ),
+                                ],
+                              ),
+                              // Container(
+                              //   // decoration: BoxDecoration(
+                              //   //   color: themeData.colorScheme.secondary.withOpacity(0.2),
+                              //   //   borderRadius: BorderRadius.circular(8),
+                              //   //   boxShadow: [
+                              //   //     BoxShadow(
+                              //   //       color: Colors.black.withOpacity(0.05),
+                              //   //       blurRadius: 10
+                              //   //     )
+                              //   //   ]
+                              //   // ),
+                              //   child: Row(children: [
+                              //     Icon(Icons.menu_rounded,size: 45,)
+                              //   ],),
+                              // )
+                              ValueListenableBuilder(
+                                  valueListenable: boxdatauser.listenable(),
+                                  builder: (context, valuee, child) {
+                                    return Row(
+                                      children: [
+                                        Directionality(
+                                          textDirection: ui.TextDirection.rtl,
+                                          child: Text(
+                                            boxdatauser.values.toList()[0].name +
+                                                ' جان ، خوش آمدید',
+                                            style: themeData.textTheme.subtitle1,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        InkWell(
+                                          child: Image.asset(
+                                            'assets/images/png/user.png',
+                                            scale: 7,
+                                          ),
+                                          onTap: () {
+                                            Scaffold.of(context).openEndDrawer();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: boxtrx.listenable(),
+                            builder: (context, valuee, child) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text('تومان',
+                                              style:
+                                                  themeData.textTheme.headline3),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            replaceFarsiNumber(
+                                                value.format(hesab.talab())),
+                                            style: themeData.textTheme.subtitle2!
+                                                .copyWith(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              color: const Color(0xff00f53f),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/png/up.png',
+                                              scale: 3,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text('تومان',
+                                              style:
+                                                  themeData.textTheme.headline3),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            replaceFarsiNumber(
+                                                value.format(hesab.bedehi())),
+                                            style: themeData.textTheme.subtitle2!
+                                                .copyWith(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              color: const Color(0xfff82442),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/png/down.png',
+                                              scale: 3,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  SizedBox(
+                                      width: 130,
+                                      height: 130,
+                                      child: MyPieChart(
+                                        talab: hesab.talab().toDouble(),
+                                        bedehi: hesab.bedehi().toDouble(),
+                                        themeData: themeData,
+                                      ))
 
-                        decoration: InputDecoration(
-                            hintTextDirection: ui.TextDirection.rtl,
-                            border: InputBorder.none,
-                            hintText: 'سریع پیداش کن...',
-                            prefixIcon: Image.asset(
-                              'assets/images/png/search.png',
-                              scale: 10,
-                            )),
+                                  // Image.asset(
+                                  //   'assets/images/png/chart.png',
+                                  //   scale: 3,
+                                  // ),
+                                  //Image.asset('assets/images/png/arrow.png')
+                                ],
+                              );
+                            },
+                          )
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Expanded(
-                child: Padding(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15)),
+                    width: double.infinity,
+                    height: 60,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                            color: const Color.fromARGB(255, 175, 5, 167),
+                            width: 2)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Directionality(
+                        textDirection: ui.TextDirection.rtl,
+                        child: TextField(
+                          onTap: () {
+                            _controller.selection = TextSelection.fromPosition(
+                                TextPosition(offset: _controller.text.length));
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              searchKeywordNotifier.value = _controller.text;
+                            });
+                          },
+                          controller: _controller,
+                          decoration: InputDecoration(
+                              hintTextDirection: ui.TextDirection.rtl,
+                              border: InputBorder.none,
+                              hintText: 'سریع پیداش کن...',
+                              prefixIcon: Image.asset(
+                                'assets/images/png/search.png',
+                                scale: 10,
+                              )),
+                        ),
+                      ),
                     ),
-                    child: SingleChildScrollView(
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                  child: Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15)),
+                      ),
                       child: Column(
                         children: [
                           Padding(
@@ -351,6 +371,7 @@ class _HomeState extends State<Home> {
                             builder: (context, value, child) {
                               return boxacc.values.isNotEmpty
                                   ? _ListBuilderAccounts(
+
                                       boxtrx: boxtrx,
                                       boxacc: boxacc,
                                       themeData: themeData,
@@ -372,9 +393,9 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ));
   }

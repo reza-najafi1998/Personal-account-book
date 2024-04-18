@@ -226,14 +226,25 @@ class _ItemHesabListState extends State<_ItemHesabList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                        replaceFarsiNumber(
-                            value.format(int.parse(widget.price))),
-                        style: widget.themeData.textTheme.headline3!.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        )),
+                    Container(
+                      height: 35,
+                      width: 80,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+
+                            replaceFarsiNumber(
+                                value.format(int.parse(widget.price))),
+                            overflow: TextOverflow.fade,
+                            style: widget.themeData.textTheme.headline3!.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                        ),
+                      ),
+                    ),
                     Text(
                       'تومان',
                       style: widget.themeData.textTheme.headline3!.copyWith(

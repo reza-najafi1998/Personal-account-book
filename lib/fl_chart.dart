@@ -45,39 +45,48 @@ class MyPieChart extends StatelessWidget {
                   )
                 ])),
           ),
-          Center(
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => Settingpage(),
-                    ));
-                print('object');
-              },
-              child: Container(
-                width: 50,
-                height: 80,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.settings,
-                      size: 38,
-                    ),
-                    Text(
-                      'تنظیمات',
-                      style: themeData.textTheme.headline3!.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13),
-                    )
-                  ],
-                ),
+          Center(child: 
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: talab>bedehi?const Color(0xff00f53f):const Color(0xfff82442),
               ),
-            ),
-          ),
+            ),)
+          // Center(
+          //   child: InkWell(
+          //     onTap: () {
+          //       Navigator.push(
+          //           context,
+          //           CupertinoPageRoute(
+          //             builder: (context) => Settingpage(),
+          //           ));
+          //       print('object');
+          //     },
+          //     child: Container(
+          //       width: 50,
+          //       height: 80,
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.center,
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           Icon(
+          //             Icons.settings,
+          //             size: 38,
+          //           ),
+          //           Text(
+          //             'تنظیمات',
+          //             style: themeData.textTheme.headline3!.copyWith(
+          //                 color: Colors.black,
+          //                 fontWeight: FontWeight.w400,
+          //                 fontSize: 13),
+          //           )
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ]),
 
       ],

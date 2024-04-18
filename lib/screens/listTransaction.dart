@@ -26,6 +26,7 @@ class _ListTransactionState extends State<ListTransaction> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: InkWell(
         onTap: () {
           final transactions = Transactions();
@@ -36,28 +37,25 @@ class _ListTransactionState extends State<ListTransaction> {
                   )));
         },
         child: Container(
-          width: 138,
-          height: 60,
+          width: 150,
+          height: 50,
           decoration: BoxDecoration(
-              color: themeData.primaryColor,
-              borderRadius: BorderRadius.circular(18)),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 6, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'افزودن تراکنش',
-                  style:
-                  themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
-                ),
-                const Icon(
-                  CupertinoIcons.plus_circle,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ],
-            ),
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.circular(30)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'افزودن تراکنش',
+                style:
+                themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
+              ),                SizedBox(width: 8,)
+              ,const Icon(
+                CupertinoIcons.plus_circle,
+                color: Colors.white,
+                size: 30,
+              ),
+            ],
           ),
         ),
       ),
