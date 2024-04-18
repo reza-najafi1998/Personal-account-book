@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 //import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/codeRecive.dart';
 import 'package:payment/data/data.dart';
+import 'package:payment/main.dart';
 import 'package:payment/screens/addPerson.dart';
 import 'package:payment/screens/home.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -108,8 +110,8 @@ class Register extends StatelessWidget {
                           final Box<DataUser> box = Hive.box('User');
                           box.add(user);
                         }
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => Home(),
+                        Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                          builder: (context) => MainScreen(),
                         ));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

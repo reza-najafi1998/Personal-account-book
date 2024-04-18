@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:payment/data/data.dart';
+import 'package:payment/main.dart';
 import 'package:payment/screens/home.dart';
 import 'package:payment/screens/register.dart';
 
@@ -18,11 +20,11 @@ class _SplashScreenState extends State<SplashScreen> {
     if (box.values.length > 0) {
       Future.delayed(Duration(seconds: 1)).then((value) {
         Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+            .pushReplacement(CupertinoPageRoute(builder: (context) => MainScreen()));
       });
     }else{
       Future.delayed(Duration(seconds: 2)).then((value) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Register()));
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context)=> Register()));
       });
     }
 

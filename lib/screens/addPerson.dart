@@ -9,6 +9,7 @@ import 'package:payment/data/data.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 // import 'package:shamsi_date/shamsi_date.dart';
 
+import 'addTransaction.dart';
 import 'home.dart';
 
 class AddPerson extends StatefulWidget {
@@ -99,15 +100,22 @@ class _AddPersonState extends State<AddPerson> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onChanged: (value) {
+                      print(value);
+                      if(value.isNotEmpty && value.substring(0,1)=='0'){
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text('عدد صفر ابتدای مبلغ درج نخواهد شد')),
+                        ));
+                      }
+                    },
                     controller: _amountTxt,
                     maxLength: 15,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-                    ],
+                    inputFormatters: [CustomAmountFormatter()],
                     decoration: InputDecoration(
-
                         label: Text('مبلغ حساب'),
                         prefixIcon: Icon(Icons.attach_money_rounded),
                         border: OutlineInputBorder(
@@ -136,6 +144,10 @@ class _AddPersonState extends State<AddPerson> {
               InkWell(
                 onTap: () async{
                   if (_nameTxt.text.isNotEmpty && _amountTxt.text.isNotEmpty) {
+
+                    String outputString = _amountTxt.text.replaceAll(',', ''); // حذف تمام ویرگول‌ها
+
+
                     final transactions = Transactions();
                     final accounts = Accounts();
                     final box = Hive.box<Accounts>('Accounts');
@@ -162,7 +174,7 @@ class _AddPersonState extends State<AddPerson> {
 
                     transactions.id = accounts.id;
                     transactions.status = isswitch;
-                    transactions.price = int.parse(_amountTxt.text);
+                    transactions.price = int.parse(outputString);
                     transactions.description =
                         _infoTxt.text.isNotEmpty ? _infoTxt.text : '';
 
@@ -187,9 +199,10 @@ class _AddPersonState extends State<AddPerson> {
                       await boxacc.add(accounts);
 
                       Navigator.pop(context);
-                      Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                        builder: (context) => Home(),
-                      ));
+                      Navigator.pop(context);
+                      // Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                      //   builder: (context) => Home(),
+                      // ));
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
