@@ -209,7 +209,7 @@ class Register extends StatelessWidget {
                                 //print('objectobjectobjectobjectobjectobject');
                                 Navigator.of(context)
                                     .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => Home(),
+                                  builder: (context) => MainScreen(),
                                 ));
                               } else {
                                 Navigator.pop(context);

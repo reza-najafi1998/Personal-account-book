@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
               onPrimary: Colors.white,
               secondary: Color(0xffb8b8b8),
               onSecondary: Colors.black),
+
           textTheme: TextTheme(
               //headlineSmall: TextStyle(fontFamily: fontName,fontSize: 14),
               subtitle2: TextStyle(
@@ -90,7 +91,6 @@ class _MainScreenState extends State<MainScreen> {
         onTop: (int index) {
           setState(() {
             selectedPageIndex = index;
-            print('index');
           });
         },
         pageselected: selectedPageIndex,
@@ -118,7 +118,6 @@ class _BottonNavigiton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 75,
-
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -134,7 +133,7 @@ class _BottonNavigiton extends StatelessWidget {
               active: pageselected == menuIndex ? true : false,
               onTop: () {
                 onTop(menuIndex);
-              }, title: 'منو',
+              }, title: 'یاد آور ها',
             ),
             _ItemBottonNavigition(
               iconpath: 'home.svg',
@@ -221,13 +220,16 @@ class _ItemBottonNavigition extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            SvgPicture.asset(
-              'assets/images/svgs/$iconpath',
-              width: 35,
-              colorFilter: active
-                  ? const ColorFilter.mode(Colors.deepPurple, BlendMode.srcIn)
-                  : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
-              //semanticsLabel: 'A red up arrow'
+            Padding(
+              padding: const EdgeInsets.all(3),
+              child: SvgPicture.asset(
+                'assets/images/svgs/$iconpath',
+                width: 30,
+                colorFilter: active
+                    ? const ColorFilter.mode(Colors.deepPurple, BlendMode.srcIn)
+                    : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                //semanticsLabel: 'A red up arrow'
+              ),
             ),
             Visibility(
                 visible: active?true:false,

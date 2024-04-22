@@ -10,8 +10,7 @@ import  'package:persian_number_utility/persian_number_utility.dart';
 
 //List<PendingNotificationRequest> pendingNotifications = [];
 
-ValueNotifier<List<PendingNotificationRequest>> pendingNotifications =
-    ValueNotifier<List<PendingNotificationRequest>>([]);
+
 
 NotificationHelper notificationHelper = NotificationHelper();
 
@@ -23,6 +22,9 @@ class Reminder extends StatefulWidget {
 }
 
 class _ReminderState extends State<Reminder> {
+  ValueNotifier<List<PendingNotificationRequest>> pendingNotifications =
+  ValueNotifier<List<PendingNotificationRequest>>([]);
+
   bool issort = true;
 
   @override
@@ -45,6 +47,9 @@ class _ReminderState extends State<Reminder> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _retrievePendingNotifications();
+    });
     // final boxtrx = Hive.box<Transactions>('Transactions');
     // final boxacc = Hive.box<Accounts>('Accounts');
     final themeData = Theme.of(context);
@@ -121,7 +126,13 @@ class _ReminderState extends State<Reminder> {
                       SizedBox(
                         width: 4,
                       ),
-                      Icon(Icons.notifications_active_outlined)
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              _retrievePendingNotifications();
+                            });
+                          },
+                          child: Icon(Icons.notifications_active_outlined))
                     ],
                   )
                 ],
@@ -135,8 +146,7 @@ class _ReminderState extends State<Reminder> {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       //height: MediaQuery.of(context).size.height,
-                      child: ValueListenableBuilder<
-                              List<PendingNotificationRequest>>(
+                      child: ValueListenableBuilder(
                           // گوش دادن به تغییرات در ValueNotifier
                           valueListenable: pendingNotifications,
                           builder: (context, notifications, child) {
@@ -166,7 +176,6 @@ class _ReminderState extends State<Reminder> {
                                       setState(() {
                                         notificationHelper.cancelNotification(pendingNotifications.value[index].id);
                                         pendingNotifications.value.removeWhere((notification) => notification.id == id);
-                                        // print(pendingNotifications.value[index].id)
                                         Navigator.pop(context);
                                       });
                                   },);
@@ -444,7 +453,6 @@ class Itemlist extends StatelessWidget {
 
              // notificationHelper.cancelNotification(personid);
 
-              print(pendingNotifications.value.length);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Directionality(
                     textDirection: TextDirection.rtl,
