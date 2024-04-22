@@ -7,8 +7,10 @@ import 'package:payment/screens/addPerson.dart';
 import 'package:payment/calculatorHesab.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
+import 'package:payment/widgets/sortedDialogHome.dart';
 import 'package:payment/widgets/draverWidget.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:shamsi_date/shamsi_date.dart';
 import 'dart:ui' as ui;
@@ -42,24 +44,45 @@ String jalaidate = now.toJalali().year.toString() +
     now.toJalali().day.toString();
 
 class _HomeState extends State<Home> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   name = datauserdata.name.toString();
-  // }
+
+  late SharedPreferences _prefs;
+
+  bool _SortedAccording=true;
+  bool _SortedAs=true;
+
+
+  void _saveSortedSettings(bool SortedAccording,bool SortedAs) {
+    _prefs.setBool('SortedAccording', SortedAccording);
+    _prefs.setBool('SortedAs', SortedAs);
+    // ...
+  }
+
+
+  // تابع برای بارگیری تنظیمات
+  void _loadSettings() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _SortedAccording =  _prefs.getBool('SortedAccording') ?? true;
+      _SortedAs = _prefs.getBool('SortedAs') ?? true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    _loadSettings();
+
     final themeData = Theme.of(context);
     setState(() {
-      // print('00000000000000000000000000000000000000000000000000000000000000000');
-      // print(hesab.talab().toString());
-      // print(hesab.bedehi().toString());
       name = datauserdata.name.toString();
     });
 
     return Scaffold(
-        endDrawer: MyDrawer(nameUser: boxdatauser.values.toList()[0].name,),
+        //endDrawer: MyDrawer(nameUser: boxdatauser.values.toList()[0].name,),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: InkWell(
           onTap: () {
@@ -74,14 +97,16 @@ class _HomeState extends State<Home> {
                 color: Colors.deepPurple,
                 borderRadius: BorderRadius.circular(30)),
             child: Row(
-mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'افزودن حساب',
-                  style:
-                  themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
-                ),                SizedBox(width: 8,)
-                ,const Icon(
+                  style: themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                const Icon(
                   CupertinoIcons.plus_circle,
                   color: Colors.white,
                   size: 30,
@@ -92,6 +117,7 @@ mainAxisAlignment: MainAxisAlignment.center,
         ),
         body: SafeArea(
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(
@@ -162,9 +188,13 @@ mainAxisAlignment: MainAxisAlignment.center,
                                         Directionality(
                                           textDirection: ui.TextDirection.rtl,
                                           child: Text(
-                                            boxdatauser.values.toList()[0].name +
-                                                ' جان ، خوش آمدید',
-                                            style: themeData.textTheme.subtitle1,
+                                            'سلام ' +
+                                                boxdatauser.values
+                                                    .toList()[0]
+                                                    .name +
+                                                ' جان',
+                                            style:
+                                                themeData.textTheme.subtitle1,
                                           ),
                                         ),
                                         const SizedBox(
@@ -176,7 +206,8 @@ mainAxisAlignment: MainAxisAlignment.center,
                                             scale: 7,
                                           ),
                                           onTap: () {
-                                            Scaffold.of(context).openEndDrawer();
+                                            Scaffold.of(context)
+                                                .openEndDrawer();
                                           },
                                         ),
                                       ],
@@ -191,7 +222,8 @@ mainAxisAlignment: MainAxisAlignment.center,
                             valueListenable: boxtrx.listenable(),
                             builder: (context, valuee, child) {
                               return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -199,15 +231,16 @@ mainAxisAlignment: MainAxisAlignment.center,
                                       Row(
                                         children: [
                                           Text('تومان',
-                                              style:
-                                                  themeData.textTheme.headline3),
+                                              style: themeData
+                                                  .textTheme.headline3),
                                           const SizedBox(
                                             width: 3,
                                           ),
                                           Text(
                                             replaceFarsiNumber(
                                                 value.format(hesab.talab())),
-                                            style: themeData.textTheme.subtitle2!
+                                            style: themeData
+                                                .textTheme.subtitle2!
                                                 .copyWith(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -237,15 +270,16 @@ mainAxisAlignment: MainAxisAlignment.center,
                                       Row(
                                         children: [
                                           Text('تومان',
-                                              style:
-                                                  themeData.textTheme.headline3),
+                                              style: themeData
+                                                  .textTheme.headline3),
                                           const SizedBox(
                                             width: 3,
                                           ),
                                           Text(
                                             replaceFarsiNumber(
                                                 value.format(hesab.bedehi())),
-                                            style: themeData.textTheme.subtitle2!
+                                            style: themeData
+                                                .textTheme.subtitle2!
                                                 .copyWith(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -339,15 +373,17 @@ mainAxisAlignment: MainAxisAlignment.center,
                 const SizedBox(
                   height: 15,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                  child: Expanded(
+                ConstrainedBox(
+                  //fit to bottom box list account
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height - 380,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15)),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
                         children: [
@@ -356,7 +392,40 @@ mainAxisAlignment: MainAxisAlignment.center,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(Icons.account_balance_outlined),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                        onTap: () async {
+
+                                          SelectedValues? selectedValues = await showDialog<SelectedValues>(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              print(_SortedAccording.toString()+"    "+_SortedAs.toString());
+                                              return SortedDialogHome(selectedAccordingValue: _SortedAccording,selectedAsValue: _SortedAs,);
+                                            },
+                                          );
+
+                                          if (selectedValues != null) {
+                                            print('Selected according value: ${selectedValues.selectedAccordingValue}');
+                                            print('Selected as value: ${selectedValues.selectedAsValue}');
+                                            setState(() {
+                                              _saveSortedSettings(selectedValues.selectedAccordingValue, selectedValues.selectedAsValue);
+                                            });
+                                            //_saveSortedSettings(selectedValues.selectedAccordingValue, selectedValues.selectedAsValue)
+
+                                          } else {
+                                            print('Dialog was dismissed.');
+                                          }
+
+
+                                        },
+                                        child: Icon(Icons.more_vert_rounded)),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    const Icon(Icons.account_balance_outlined),
+                                  ],
+                                ),
                                 Text('لیست حساب ها',
                                     style: themeData.textTheme.subtitle2!
                                         .copyWith(
@@ -371,7 +440,6 @@ mainAxisAlignment: MainAxisAlignment.center,
                             builder: (context, value, child) {
                               return boxacc.values.isNotEmpty
                                   ? _ListBuilderAccounts(
-
                                       boxtrx: boxtrx,
                                       boxacc: boxacc,
                                       themeData: themeData,
@@ -422,6 +490,7 @@ class _ListBuilderAccounts extends StatelessWidget {
         .toList();
 
     return ListView.builder(
+      reverse: true,
       physics: const ClampingScrollPhysics(),
       shrinkWrap: true,
       itemCount: datas.length,
@@ -687,3 +756,52 @@ settingaccount(BuildContext context, ThemeData themeData, Accounts accitem) {
     },
   );
 }
+
+sorteddialog(BuildContext context, ThemeData themeData) {
+  AlertDialog alert = AlertDialog(
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16))),
+    titlePadding: EdgeInsets.all(0),
+    title: Container(
+        width: double.infinity,
+        height: 45,
+        decoration: BoxDecoration(
+            color: Colors.deepPurpleAccent,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        child: Center(child: Text('مرتب سازی لیست حساب'))),
+    //actionsAlignment: MainAxisAlignment.start,
+    titleTextStyle: themeData.textTheme.headline3!
+        .copyWith(color: Colors.white, fontSize: 18),
+    contentPadding: const EdgeInsets.all(8),
+    actions: [
+      TextButton(
+          onPressed: () async {},
+          child: Container(
+              //height: 50,
+              //width: 150,
+              decoration: BoxDecoration(
+                  color: themeData.primaryColor,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'ثبت',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              ))))
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+// تابع برای ذخیره تنظیمات

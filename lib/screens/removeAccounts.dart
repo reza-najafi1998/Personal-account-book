@@ -115,6 +115,7 @@ class _ListBuilderAccounts extends StatelessWidget {
 
     return ListView.builder(
       physics: const ClampingScrollPhysics(),
+      reverse: true,
       shrinkWrap: true,
       itemCount: datas.length,
       itemBuilder: (context, index) {

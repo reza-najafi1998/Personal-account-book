@@ -65,7 +65,7 @@ class _ListTransactionState extends State<ListTransaction> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -99,7 +99,9 @@ class _ListTransactionState extends State<ListTransaction> {
                                       .map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(value),
+                                      child: Directionality(
+                                          textDirection: TextDirection.rtl,
+                                          child: Text(value)),
                                     );
                                   }).toList(),
                                   onChanged: (value) {
@@ -127,45 +129,46 @@ class _ListTransactionState extends State<ListTransaction> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => AddReminder(id: widget.id),
+                      ));
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 70,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.deepPurpleAccent),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Icon(
+                        Icons.alarm,
+                        color: Colors.white,
+                        size: 45,
+                      ),
+                      Text(
+                        'ثبت یادآور',
+                        style: themeData.textTheme.headline3!.copyWith(
+                            color: Colors.white, fontSize: 25),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             Expanded(
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) => AddReminder(id: widget.id),
-                              ));
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 70,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.deepPurpleAccent),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Icon(
-                                Icons.alarm,
-                                color: Colors.white,
-                                size: 45,
-                              ),
-                              Text(
-                                'ثبت یادآور',
-                                style: themeData.textTheme.headline3!.copyWith(
-                                    color: Colors.white, fontSize: 25),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                     Container(
                       width: MediaQuery.of(context).size.width,
                       //height: MediaQuery.of(context).size.height,
@@ -513,8 +516,13 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
                 ),
                 Flexible(
                   flex: 1,
-                  child: InkWell(
-                    onTap: () async {
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: () async {
                       await Navigator.of(context).push(CupertinoPageRoute(
                           builder: (context) => AddTransaction(trx: trxitem)));
                       Navigator.pop(context);

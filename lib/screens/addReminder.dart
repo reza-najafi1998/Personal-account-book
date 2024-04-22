@@ -136,31 +136,6 @@ class _AddReminderState extends State<AddReminder> {
                           ),
                         ),
 
-                        // ElevatedButton(
-                        //     onPressed: () async {
-                        //       jalaliselected = (await showPersianDatePicker(
-                        //         context: context,
-                        //         initialDate: Jalali.now(),
-                        //         firstDate: Jalali(Jalali.now().year,
-                        //             Jalali.now().month, Jalali.now().day),
-                        //         lastDate: Jalali(Jalali.now().year + 10, 12),
-                        //       ))!;
-                        //       setState(() {
-                        //         final picked = this.jalaliselected;
-                        //         if (picked != null) {
-                        //           _jalalidate = picked.year.toString() +
-                        //               '/' +
-                        //               picked.month.toString() +
-                        //               '/' +
-                        //               picked.day.toString();
-                        //         }
-                        //       });
-                        //     },
-                        //     child: Text(
-                        //       'تنظیم تاریخ',
-                        //       style: themeData.textTheme.headline3!
-                        //           .copyWith(color: Colors.white),
-                        //     )),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -193,20 +168,31 @@ class _AddReminderState extends State<AddReminder> {
                   //width: 170,
                   decoration: BoxDecoration(
                       border: Border.all(
-                          width: 1, color: themeData.colorScheme.secondary),
+                          width: 2, color: Colors.deepPurple),
                       borderRadius: BorderRadius.circular(20)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                      Container(
+                        width: double.infinity,
+                        height: 45,
+                        decoration: BoxDecoration(
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(18),
+                              topLeft: Radius.circular(18),
+                            )),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Text('${fixmonthdate(settime.hour.toString())} : ${fixmonthdate(settime.minute.toString())}'.toPersianDigit(),style: themeData.textTheme.subtitle1,),
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                '${fixmonthdate(settime.hour.toString())} : ${fixmonthdate(settime.minute.toString())}'
+                                    .toPersianDigit(),
+                                style: themeData.textTheme.subtitle1!.copyWith(color: Colors.white,fontWeight: FontWeight.bold,letterSpacing: 2),
+                              ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -217,7 +203,7 @@ class _AddReminderState extends State<AddReminder> {
                                   child: Text(
                                     'انتخاب زمان :',
                                     style: themeData.textTheme.headline3!
-                                        .copyWith(color: Colors.black),
+                                        .copyWith(color: Colors.white),
                                   ),
                                 ),
                                 SizedBox(
@@ -230,7 +216,7 @@ class _AddReminderState extends State<AddReminder> {
                                 Icon(
                                   Icons.watch_later_outlined,
                                   size: 25,
-                                  color: Color(0xff8d8c8c),
+                                  color: Colors.white,
                                 ),
                                 SizedBox(
                                   width: 8,
@@ -256,17 +242,24 @@ class _AddReminderState extends State<AddReminder> {
                         isForce2Digits: true,
                         onTimeChange: (time) {
                           setState(() {
-                            settime=TimeOfDay(hour: time.hour, minute: time.minute);
+                            settime =
+                                TimeOfDay(hour: time.hour, minute: time.minute);
                           });
                         },
                       ),
                     ],
                   )),
-              SizedBox(height: 16,),
+              SizedBox(
+                height: 16,
+              ),
               InkWell(
                 onTap: () async {
-                  print(settime);
-                  Jalali x = Jalali(
+
+                  Jalali x = jalaliselected.length==9?Jalali(
+                      int.parse(jalaliselected.substring(0, 4)),
+                      int.parse(jalaliselected.substring(5, 7)),
+                      int.parse(jalaliselected.substring(8, 9))):
+                  Jalali(
                       int.parse(jalaliselected.substring(0, 4)),
                       int.parse(jalaliselected.substring(5, 7)),
                       int.parse(jalaliselected.substring(8, 10)));
