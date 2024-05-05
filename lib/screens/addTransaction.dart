@@ -46,7 +46,7 @@ class _AddTransactionState extends State<AddTransaction> {
   Widget build(BuildContext context) {
     final box = Hive.box<Accounts>('Accounts');
 
-    _nameTxt.text=box.values.toList()[widget.trx.id-1].name;
+    _nameTxt.text=box.values.toList().firstWhere((element) => element.id==widget.trx.id).name;
     final themeData = Theme.of(context);
 
     return Scaffold(
@@ -124,7 +124,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   textDirection: TextDirection.rtl,
                   child: TextField(
                     onChanged: (value) {
-                      print(value);
+                      // print(value);
                       if(value.isNotEmpty && value.substring(0,1)=='0'){
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Directionality(

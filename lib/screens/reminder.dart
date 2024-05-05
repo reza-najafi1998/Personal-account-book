@@ -6,11 +6,9 @@ import 'package:payment/data/data.dart';
 import 'package:payment/screens/addReminder.dart';
 import 'package:payment/services/notift_getlist.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
-import  'package:persian_number_utility/persian_number_utility.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 
 //List<PendingNotificationRequest> pendingNotifications = [];
-
-
 
 NotificationHelper notificationHelper = NotificationHelper();
 
@@ -23,7 +21,7 @@ class Reminder extends StatefulWidget {
 
 class _ReminderState extends State<Reminder> {
   ValueNotifier<List<PendingNotificationRequest>> pendingNotifications =
-  ValueNotifier<List<PendingNotificationRequest>>([]);
+      ValueNotifier<List<PendingNotificationRequest>>([]);
 
   bool issort = true;
 
@@ -62,79 +60,25 @@ class _ReminderState extends State<Reminder> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: themeData.scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: themeData.scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                          child: Row(
-                            children: [
-                              Directionality(
-                                textDirection: TextDirection.rtl,
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  hint: Text(
-                                    'مرتب سازی',
-                                    style: themeData.textTheme.subtitle1!
-                                        .copyWith(fontSize: 12),
-                                  ),
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  style: themeData.textTheme.subtitle1!
-                                      .copyWith(fontSize: 10),
-                                  items: <String>['زمان ایجاد', 'اولویت نمایش']
-                                      .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (value == 'زمان ایجاد') {
-                                        issort = false;
-                                      } else if (value == 'اولویت نمایش') {
-                                        issort = true;
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                  Text(
+                    'لیست یادآور های در انتظار',
+                    style: themeData.textTheme.subtitle1!.copyWith(
+                        fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        'لیست یادآور های در انتظار',
-                        style: themeData.textTheme.subtitle1!.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            setState(() {
-                              _retrievePendingNotifications();
-                            });
-                          },
-                          child: Icon(Icons.notifications_active_outlined))
-                    ],
-                  )
+                  SizedBox(
+                    width: 4,
+                  ),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          _retrievePendingNotifications();
+                        });
+                      },
+                      child: Icon(Icons.notifications_active_outlined))
                 ],
               ),
             ),
@@ -150,53 +94,64 @@ class _ReminderState extends State<Reminder> {
                           // گوش دادن به تغییرات در ValueNotifier
                           valueListenable: pendingNotifications,
                           builder: (context, notifications, child) {
-
-                            return
-                              pendingNotifications.value.isNotEmpty?
-                              ListView.builder(
-                              physics: const ClampingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: pendingNotifications.value.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Itemlist(
-                                    themeData: themeData,
-                                    titleNotify: pendingNotifications
-                                        .value[index].title
-                                        .toString(),
-                                    bodyNotify: pendingNotifications
-                                        .value[index].body
-                                        .toString(),
-                                    payloadNotify: pendingNotifications
-                                        .value[index].payload
-                                        .toString(),
-                                    personid:
-                                        pendingNotifications.value[index].id,
-
-                                  onDelete: (int id) {
-                                      setState(() {
-                                        notificationHelper.cancelNotification(pendingNotifications.value[index].id);
-                                        pendingNotifications.value.removeWhere((notification) => notification.id == id);
-                                        Navigator.pop(context);
-                                      });
-                                  },);
-                              },
-                            ):
-                              Padding(
-                                padding: const EdgeInsets.only(top: 64),
-                                child: Column(
-
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/png/empty_list.png',
-                                      scale: 2,
-                                    ),SizedBox(height: 16,)
-                                    ,
-                                    Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: Text('یادآوری یافت نشد.',style: Theme.of(context).textTheme.headline3,))
-                                  ],
-                                ),
-                              );
+                            return pendingNotifications.value.isNotEmpty
+                                ? ListView.builder(
+                                    physics: const ClampingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount:
+                                        pendingNotifications.value.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Itemlist(
+                                        themeData: themeData,
+                                        titleNotify: pendingNotifications
+                                            .value[index].title
+                                            .toString(),
+                                        bodyNotify: pendingNotifications
+                                            .value[index].body
+                                            .toString(),
+                                        payloadNotify: pendingNotifications
+                                            .value[index].payload
+                                            .toString(),
+                                        personid: pendingNotifications
+                                            .value[index].id,
+                                        onDelete: (int id) {
+                                          setState(() {
+                                            notificationHelper
+                                                .cancelNotification(
+                                                    pendingNotifications
+                                                        .value[index].id);
+                                            pendingNotifications.value
+                                                .removeWhere((notification) =>
+                                                    notification.id == id);
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 64),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/png/empty_list.png',
+                                          scale: 2,
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Directionality(
+                                            textDirection: TextDirection.rtl,
+                                            child: Text(
+                                              'یادآوری یافت نشد.',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline3,
+                                            ))
+                                      ],
+                                    ),
+                                  );
                           }),
                     )
                   ],
@@ -209,6 +164,7 @@ class _ReminderState extends State<Reminder> {
     );
   }
 }
+
 typedef DeleteCallback = void Function(int id);
 
 class Itemlist extends StatelessWidget {
@@ -217,8 +173,6 @@ class Itemlist extends StatelessWidget {
   final String titleNotify;
   final String bodyNotify;
   final DeleteCallback onDelete;
-
-
 
   //datetime set in payload as string
   final String payloadNotify;
@@ -230,9 +184,7 @@ class Itemlist extends StatelessWidget {
       required this.bodyNotify,
       required this.payloadNotify,
       required this.personid,
-        required this.onDelete});
-
-
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -243,36 +195,35 @@ class Itemlist extends StatelessWidget {
         .name
         .toString();
 
-    DateTime notifydatetimemiladi=
-    DateTime(
-        int.parse(payloadNotify.substring(0,4)),
-        int.parse(payloadNotify.substring(5,7)),
-        int.parse(payloadNotify.substring(8,10)),
-        int.parse(payloadNotify.substring(11,13)),
-        int.parse(payloadNotify.substring(14,16)),
+    DateTime notifydatetimemiladi = DateTime(
+      int.parse(payloadNotify.substring(0, 4)),
+      int.parse(payloadNotify.substring(5, 7)),
+      int.parse(payloadNotify.substring(8, 10)),
+      int.parse(payloadNotify.substring(11, 13)),
+      int.parse(payloadNotify.substring(14, 16)),
     );
 
-    TimeOfDay notifyTime=TimeOfDay(hour: notifydatetimemiladi.hour, minute: notifydatetimemiladi.minute);
+    TimeOfDay notifyTime = TimeOfDay(
+        hour: notifydatetimemiladi.hour, minute: notifydatetimemiladi.minute);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: InkWell(
-        onTap: () {
-         deletenotify(context, themeData, personid, titleNotify);
-        },
-        child: Container(
-          width: double.infinity,
-          height: 108,
-          decoration: BoxDecoration(
-              color: themeData.scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(0),
+      child: Container(
+        width: double.infinity,
+        height: 115,
+        decoration: BoxDecoration(
+            color: themeData.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () {
+                deletenotify(context, themeData, personid, titleNotify);
+              },
+              child: Container(
                 width: 50,
-                height: double.infinity,
+                //height:10,
                 decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 246, 28, 4),
                     borderRadius: BorderRadius.only(
@@ -298,114 +249,116 @@ class Itemlist extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          titleNotify,
-                          style: themeData.textTheme.subtitle1!
-                              .copyWith(fontSize: 15),
-                        ),
-                        Text(' : عنوان',
-                            style: themeData.textTheme.subtitle1!.copyWith(
-                                fontWeight: FontWeight.w600, fontSize: 15)),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color:
-                              themeData.colorScheme.secondary.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: SizedBox(
-                              width: 290,
-                              child: Text(
-                                bodyNotify != ''
-                                    ? 'توضیحات : ' + bodyNotify
-                                    : 'توضیحات : ندارد!',
-                                style: themeData.textTheme.subtitle1!.copyWith(
-                                    fontWeight: FontWeight.w400, fontSize: 12),
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.justify,
-                              ),
-                            )),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        titleNotify,
+                        style: themeData.textTheme.subtitle1!
+                            .copyWith(fontSize: 15),
                       ),
+                      Text(' : عنوان',
+                          style: themeData.textTheme.subtitle1!.copyWith(
+                              fontWeight: FontWeight.w600, fontSize: 15)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: themeData.colorScheme.secondary.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: SizedBox(
+                            width: 270,
+                            child: Text(
+                              bodyNotify != ''
+                                  ? 'توضیحات : ' + bodyNotify
+                                  : 'توضیحات : ندارد!',
+                              style: themeData.textTheme.subtitle1!.copyWith(
+                                  fontWeight: FontWeight.w400, fontSize: 12),
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.justify,
+                            ),
+                          )),
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        Row(
-                          children: [
-                            Text(notifydatetimemiladi.toPersianDate(),
-                              style: themeData.textTheme.subtitle1!
-                                  .copyWith(fontSize: 11),
-                            ),
-                            Text(
-                              ' : تاریخ',
-                              style: themeData.textTheme.subtitle1!
-                                  .copyWith(fontSize: 12),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Icon(
-                              Icons.date_range_outlined,
-                              size: 18,
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              fixmonthdate(notifyTime.hour.toString())+" : "+fixmonthdate(notifyTime.minute.toString()),
-                              style: themeData.textTheme.subtitle1!
-                                  .copyWith(fontSize: 12),
-                            ),
-                            Text(
-                              ' : ساعت',
-                              style: themeData.textTheme.subtitle1!
-                                  .copyWith(fontSize: 12),
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Icon(
-                              Icons.access_time_outlined,
-                              size: 18,
-                            )
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            notifydatetimemiladi.toPersianDate(),
+                            style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 11),
+                          ),
+                          Text(
+                            ' : تاریخ',
+                            style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Icon(
+                            Icons.date_range_outlined,
+                            size: 18,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            fixmonthdate(notifyTime.hour.toString()) +
+                                " : " +
+                                fixmonthdate(notifyTime.minute.toString()),
+                            style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 12),
+                          ),
+                          Text(
+                            ' : ساعت',
+                            style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Icon(
+                            Icons.access_time_outlined,
+                            size: 18,
+                          )
+                        ],
+                      ),
+                    ],
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-
-  deletenotify(BuildContext context, ThemeData themeData, int id, String title) {
+  deletenotify(
+      BuildContext context, ThemeData themeData, int id, String title) {
     AlertDialog alert = AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16))),
@@ -431,6 +384,7 @@ class Itemlist extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.error,
@@ -439,10 +393,20 @@ class Itemlist extends StatelessWidget {
                   SizedBox(
                     width: 8,
                   ),
-                  Text(
-                    'حذف یادآور "$title" .',
-                    style: themeData.textTheme.headline3!
-                        .copyWith(fontSize: 15, color: Colors.black),
+                  Row(
+                    children: [
+
+                      Text(
+                        'یادآور : ',
+                        style: themeData.textTheme.headline3!
+                            .copyWith(fontSize: 15, color: Colors.black),
+                      ),
+                      Text(
+                        '$title',
+                        style: themeData.textTheme.headline3!
+                            .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ],
               )),
@@ -451,7 +415,7 @@ class Itemlist extends StatelessWidget {
             onPressed: () async {
               onDelete(personid);
 
-             // notificationHelper.cancelNotification(personid);
+              // notificationHelper.cancelNotification(personid);
 
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Directionality(
@@ -486,11 +450,6 @@ class Itemlist extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
 
 String replaceFarsiNumber(String input) {
   const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];

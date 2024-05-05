@@ -46,6 +46,18 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+
+              Text('مبلغ',style: TextStyle(color: Colors.grey),),
+              Radio(
+               // activeColor: Colors.deepPurple,
+                value: true,
+                groupValue: selectedValues.selectedAccordingValue,
+                onChanged: (value) {
+                  // setState(() {
+                  //   selectedValues.selectedAccordingValue = false;
+                  // });
+                },
+              ),
               Text('نام'),
               Radio(
                 activeColor: Colors.deepPurple,
@@ -54,17 +66,6 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
                 onChanged: (value) {
                   setState(() {
                     selectedValues.selectedAccordingValue = true;
-                  });
-                },
-              ),
-              Text('مبلغ'),
-              Radio(
-                activeColor: Colors.deepPurple,
-                value: false,
-                groupValue: selectedValues.selectedAccordingValue,
-                onChanged: (value) {
-                  setState(() {
-                    selectedValues.selectedAccordingValue = false;
                   });
                 },
               ),
@@ -79,22 +80,22 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
               Text('صعودی'),
               Radio(
                 activeColor: Colors.deepPurple,
-                value: true,
+                value: false,
                 groupValue: selectedValues.selectedAsValue,
                 onChanged: (value) {
                   setState(() {
-                    selectedValues.selectedAsValue = true;
+                    selectedValues.selectedAsValue = false;
                   });
                 },
               ),
               Text('نزولی'),
               Radio(
                 activeColor: Colors.deepPurple,
-                value: false,
+                value: true,
                 groupValue: selectedValues.selectedAsValue,
                 onChanged: (value) {
                   setState(() {
-                    selectedValues.selectedAsValue = false;
+                    selectedValues.selectedAsValue = true;
                   });
                 },
               ),

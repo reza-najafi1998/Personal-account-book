@@ -99,8 +99,13 @@ class Register extends StatelessWidget {
                   //       ),
                   //     )),
 
-                  InkWell(
-                    onTap: () {
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () {
                       if (_nameTxt.text.isNotEmpty) {
                         final user = DataUser();
                         user.name = _nameTxt.text;
@@ -124,7 +129,7 @@ class Register extends StatelessWidget {
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      width: 227,
+                      width: 150,
                       height: 50,
                       decoration: BoxDecoration(
                           color: themeData.primaryColor,
@@ -135,17 +140,30 @@ class Register extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: InkWell(
-                    onTap: () async {
+                  Divider(
+                    indent: 50,
+                    endIndent: 50,
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () async{
+
                       var status = await Permission.storage.status;
                       // اگر مجوز داده نشده، درخواست مجوز کنید
                       if (!status.isGranted) {
                         await Permission.storage.request();
+                       // Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: Text(
+                                      'تایید مجوز برای ذخیره فایل پشتیبانی الزامی است.'))),
+                        );
                       } else {
                         try {
                           FilePickerResult? result =
@@ -167,16 +185,16 @@ class Register extends StatelessWidget {
                               //print('first : ->'+fileContent.toString());
 
                               Map<String, dynamic> jsonData =
-                                  jsonDecode(jsonString);
+                              jsonDecode(jsonString);
 
                               final boxtrx =
-                                  Hive.box<Transactions>('Transactions');
+                              Hive.box<Transactions>('Transactions');
                               final boxacc =
                                   await Hive.box<Accounts>('Accounts');
                               final boxdatauser = Hive.box<DataUser>('User');
 
                               List<dynamic> transactions =
-                                  jsonData['transactions'];
+                              jsonData['transactions'];
                               List<dynamic> accounts = jsonData['accounts'];
                               Map<dynamic, dynamic> user = jsonData['user'];
 
@@ -228,7 +246,7 @@ class Register extends StatelessWidget {
                                     content: Directionality(
                                         textDirection: TextDirection.rtl,
                                         child:
-                                            Text('error -> open file error'))),
+                                        Text('error -> open file error'))),
                               );
                             }
                           } else {
@@ -244,11 +262,31 @@ class Register extends StatelessWidget {
                         }
                       }
                     },
-                    child: Text(
-                      'بارگذاری فایل پشتیبانی',
-                      style: themeData.textTheme.headline3!
-                          .copyWith(color: Colors.blue, fontSize: 10),
-                    ))),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 200,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: themeData.colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(25)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          
+                          Icon(Icons.backup,color: Colors.white,size: 35,)
+                          ,Text(
+                            'فایل پشتیبان دارم',
+                            style: themeData.textTheme.subtitle2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ),
+            ),
           ],
         ),
       ),

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/main.dart';
 import 'package:payment/screens/home.dart';
+import 'package:payment/screens/onBoarding.dart';
 import 'package:payment/screens/register.dart';
-
-
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     }else{
       Future.delayed(Duration(seconds: 2)).then((value) {
-          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context)=> Register()));
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context)=> OnBoardingScreen()));
       });
     }
 
@@ -35,10 +35,35 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-        body: Center(
-            child: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Text('لطفا صبر کنید...', style: theme.textTheme.subtitle1),
-    )));
+        body: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/png/onboarding/logo.png',
+                scale: 5,
+              ),
+              SizedBox(
+                height: 32,
+              ),
+              SpinKitThreeBounce(
+                size: 50,
+                color: Colors.yellow,
+              )
+            ],
+          ),
+        ),
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('دفتر حساب ', style: theme.textTheme.subtitle1),
+          ),
+        ),
+      ],
+    ));
   }
 }
