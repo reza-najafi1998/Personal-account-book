@@ -15,6 +15,13 @@ class Accounts extends HiveObject {
   int id = 0;
   @HiveField(1)
   String name = '';
+
+  static int _nextId = 1;
+
+  Accounts() {
+    this.id = _nextId; // مقداردهی خودکار id به مقدار nextId
+    _nextId++; // افزایش مقدار nextId برای نمونه بعدی
+  }
 }
 
 @HiveType(typeId: 2)

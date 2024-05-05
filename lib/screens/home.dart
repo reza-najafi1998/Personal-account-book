@@ -44,26 +44,23 @@ String jalaidate = now.toJalali().year.toString() +
     now.toJalali().day.toString();
 
 class _HomeState extends State<Home> {
-
   late SharedPreferences _prefs;
 
-  bool _SortedAccording=true;
-  bool _SortedAs=true;
+  bool _SortedAccording = true;
+  bool _SortedAs = false;
 
-
-  void _saveSortedSettings(bool SortedAccording,bool SortedAs) {
+  void _saveSortedSettings(bool SortedAccording, bool SortedAs) {
     _prefs.setBool('SortedAccording', SortedAccording);
     _prefs.setBool('SortedAs', SortedAs);
     // ...
   }
 
-
   // تابع برای بارگیری تنظیمات
   void _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _SortedAccording =  _prefs.getBool('SortedAccording') ?? true;
-      _SortedAs = _prefs.getBool('SortedAs') ?? true;
+      _SortedAccording = _prefs.getBool('SortedAccording') ?? true;
+      _SortedAs = _prefs.getBool('SortedAs') ?? false;
     });
   }
 
@@ -91,7 +88,7 @@ class _HomeState extends State<Home> {
             }));
           },
           child: Container(
-            width: 150,
+            width: 175,
             height: 50,
             decoration: BoxDecoration(
                 color: Colors.deepPurple,
@@ -100,7 +97,7 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'افزودن حساب',
+                  'افزودن طرف حساب',
                   style: themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
                 ),
                 SizedBox(
@@ -396,28 +393,34 @@ class _HomeState extends State<Home> {
                                   children: [
                                     InkWell(
                                         onTap: () async {
-
-                                          SelectedValues? selectedValues = await showDialog<SelectedValues>(
+                                          SelectedValues? selectedValues =
+                                              await showDialog<SelectedValues>(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              print(_SortedAccording.toString()+"    "+_SortedAs.toString());
-                                              return SortedDialogHome(selectedAccordingValue: _SortedAccording,selectedAsValue: _SortedAs,);
+                                              return SortedDialogHome(
+                                                selectedAccordingValue:
+                                                    _SortedAccording,
+                                                selectedAsValue: _SortedAs,
+                                              );
                                             },
                                           );
 
                                           if (selectedValues != null) {
-                                            print('Selected according value: ${selectedValues.selectedAccordingValue}');
-                                            print('Selected as value: ${selectedValues.selectedAsValue}');
+                                            print(
+                                                'Selected according value: ${selectedValues.selectedAccordingValue}');
+                                            print(
+                                                'Selected as value: ${selectedValues.selectedAsValue}');
                                             setState(() {
-                                              _saveSortedSettings(selectedValues.selectedAccordingValue, selectedValues.selectedAsValue);
+                                              _saveSortedSettings(
+                                                  selectedValues
+                                                      .selectedAccordingValue,
+                                                  selectedValues
+                                                      .selectedAsValue);
                                             });
                                             //_saveSortedSettings(selectedValues.selectedAccordingValue, selectedValues.selectedAsValue)
-
                                           } else {
                                             print('Dialog was dismissed.');
                                           }
-
-
                                         },
                                         child: Icon(Icons.more_vert_rounded)),
                                     SizedBox(
@@ -426,7 +429,7 @@ class _HomeState extends State<Home> {
                                     const Icon(Icons.account_balance_outlined),
                                   ],
                                 ),
-                                Text('لیست حساب ها',
+                                Text('لیست طرف حساب ها',
                                     style: themeData.textTheme.subtitle2!
                                         .copyWith(
                                             color: Colors.black,
@@ -444,13 +447,23 @@ class _HomeState extends State<Home> {
                                       boxacc: boxacc,
                                       themeData: themeData,
                                       hesab: hesab,
+                                      sortedAs: _SortedAs,
                                     )
-                                  : Padding(
-                                      padding: const EdgeInsets.only(top: 32),
-                                      child: Image.asset(
-                                        'assets/images/png/empty_list.png',
-                                        scale: 2,
-                                      ),
+                                  : Column(
+                                      children: [
+                                        SizedBox(height: 32,),
+                                        Image.asset(
+                                          'assets/images/png/empty_list.png',
+                                          scale: 2,
+                                        ),
+                                        SizedBox(height: 16,),
+                                        Directionality(
+                                          textDirection: ui.TextDirection.rtl
+                                          ,child: Text('طرف حسابی پیدا نشد.\n با گزینه "افزودن طرف حساب" ایجاد کنید.'
+                                          ,textAlign: TextAlign.center,
+                                          style: themeData.textTheme.subtitle1!.copyWith(fontSize: 12,color: Colors.black.withOpacity(0.5)),),
+                                        )
+                                      ],
                                     );
                             },
                           ),
@@ -476,12 +489,14 @@ class _ListBuilderAccounts extends StatelessWidget {
     required this.boxtrx,
     required this.boxacc,
     required this.hesab,
+    required this.sortedAs,
   });
 
   final Box<Transactions> boxtrx;
   final Box<Accounts> boxacc;
   final ThemeData themeData;
   final CalculatorHesab hesab;
+  final bool sortedAs;
 
   @override
   Widget build(BuildContext context) {
@@ -489,14 +504,48 @@ class _ListBuilderAccounts extends StatelessWidget {
         .where((element) => element.name.contains(_controller.text))
         .toList();
 
+    int customCompare(String a, String b) {
+      // اولویت رشته‌های فارسی
+      if (a.contains(RegExp(r'[\u0600-\u06FF]')) &&
+          !b.contains(RegExp(r'[\u0600-\u06FF]'))) {
+        return -1;
+      } else if (!a.contains(RegExp(r'[\u0600-\u06FF]')) &&
+          b.contains(RegExp(r'[\u0600-\u06FF]'))) {
+        return 1;
+      }
+
+      // اولویت رشته‌های لاتین
+      if (a.contains(RegExp(r'[a-zA-Z]')) && !b.contains(RegExp(r'[a-zA-Z]'))) {
+        return -1;
+      } else if (!a.contains(RegExp(r'[a-zA-Z]')) &&
+          b.contains(RegExp(r'[a-zA-Z]'))) {
+        return 1;
+      }
+
+      // اولویت اعداد
+      if (a.contains(RegExp(r'[0-9]')) && !b.contains(RegExp(r'[0-9]'))) {
+        return -1;
+      } else if (!a.contains(RegExp(r'[0-9]')) &&
+          b.contains(RegExp(r'[0-9]'))) {
+        return 1;
+      }
+
+      // در صورتی که هیچ یک از شرایط بالا برقرار نبود، از مقایسه معمولی استفاده می‌کنیم
+      return a.compareTo(b);
+    }
+
+    datas.sort((a, b) => customCompare(a.name, b.name));
+
     return ListView.builder(
-      reverse: true,
+      reverse: sortedAs,
       physics: const ClampingScrollPhysics(),
       shrinkWrap: true,
       itemCount: datas.length,
       itemBuilder: (context, index) {
         final Accounts data = datas[index];
         int tempprice = hesab.fullhesabperson(data.id);
+
+        // print(data.id.toString()+' '+data.name.toString());
 
         return _ItemHesabList(
           themeData: themeData,

@@ -94,7 +94,7 @@ class _AddReminderState extends State<AddReminder> {
                   textDirection: TextDirection.rtl,
                   child: TextField(
                     controller: _infoTxt,
-                    maxLength: 150,
+                    maxLength: 60,
                     textAlign: TextAlign.right,
                     decoration: InputDecoration(
                         label: Text('توضیحات'),
@@ -281,7 +281,7 @@ class _AddReminderState extends State<AddReminder> {
                   if (checktime < 0) {
                     NotificationService().scheduleNotification(
                         id: widget.id,
-                        title: _nameTxt.text + ' یاد آوری حساب ',
+                        title:'یادآور حساب '+ _nameTxt.text,
                         body: _infoTxt.text,
                         payLoad: scheduleTime.toString(),
                         scheduledNotificationDateTime: scheduleTime);

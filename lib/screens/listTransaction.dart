@@ -31,6 +31,7 @@ class _ListTransactionState extends State<ListTransaction> {
         onTap: () {
           final transactions = Transactions();
           transactions.id = widget.id;
+          // print(transactions.id.toString());
           Navigator.of(context).push(CupertinoPageRoute(
               builder: (context) => AddTransaction(
                     trx: transactions,

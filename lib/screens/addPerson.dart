@@ -38,7 +38,7 @@ class _AddPersonState extends State<AddPerson> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'فرم ثبت حساب جدید',
+                'فرم ثبت طرف حساب جدید',
                 style: themeData.textTheme.subtitle1!.copyWith(fontSize: 23),
               ),
               const SizedBox(
@@ -54,7 +54,7 @@ class _AddPersonState extends State<AddPerson> {
                     textAlign: TextAlign.right,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.switch_account),
-                        label: const Text('نام حساب'),
+                        label: const Text('نام طرف حساب'),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20))),
                   ),
@@ -64,7 +64,7 @@ class _AddPersonState extends State<AddPerson> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'بدهکاری',
+                    'افزودن به حساب',
                     style: themeData.textTheme.subtitle1,
                   ),
                   const SizedBox(
@@ -92,7 +92,7 @@ class _AddPersonState extends State<AddPerson> {
                   const SizedBox(
                     width: 6,
                   ),
-                  Text('طلبکاری', style: themeData.textTheme.subtitle1),
+                  Text('کسر از حساب', style: themeData.textTheme.subtitle1),
                 ],
               ),
               Padding(
@@ -101,7 +101,7 @@ class _AddPersonState extends State<AddPerson> {
                   textDirection: TextDirection.rtl,
                   child: TextField(
                     onChanged: (value) {
-                      print(value);
+                      // print(value);
                       if(value.isNotEmpty && value.substring(0,1)=='0'){
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Directionality(
@@ -123,6 +123,7 @@ class _AddPersonState extends State<AddPerson> {
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                 child: Directionality(
@@ -158,34 +159,9 @@ class _AddPersonState extends State<AddPerson> {
                         isExists = true;
                       }
                     }
-                    var now = new DateTime.now();
-                    var formatter = new intl.DateFormat('yyyy-MM-dd');
-                    Gregorian g = Gregorian(now.year, now.month, now.day);
 
-                    String temptime = now.hour.toString() +
-                        ':' +
-                        now.minute.toString() +
-                        ':' +
-                        now.second.toString();
-                    transactions.time = temptime;
-
-                    accounts.id = box.values.length + 1;
-                    accounts.name = _nameTxt.text;
-
-                    transactions.id = accounts.id;
-                    transactions.status = isswitch;
-                    transactions.price = int.parse(outputString);
-                    transactions.description =
-                        _infoTxt.text.isNotEmpty ? _infoTxt.text : '';
-
-                    transactions.date = g.toJalali().year.toString() +
-                        '/' +
-                        g.toJalali().month.toString() +
-                        '/' +
-                        g.toJalali().day.toString();
-                    transactions.time = temptime;
                     if (isExists) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Directionality(
                             textDirection: TextDirection.rtl,
                             child: Text('نام حساب تکراری است')),
@@ -193,10 +169,33 @@ class _AddPersonState extends State<AddPerson> {
                     } else {
                       showAlertDialog(context, 'لطفا صبر کنید');
 
-                      final Box<Transactions> boxtrx = Hive.box('transactions');
-                      await boxtrx.add(transactions);
+                      var now = DateTime.now();
+                      // var formatter = new intl.DateFormat('yyyy-MM-dd');
+                      Gregorian g = Gregorian(now.year, now.month, now.day);
+
+                      String temptime = '${now.hour}:${now.minute}:${now.second}';
+                      transactions.time = temptime;
+
+                      //accounts.id = box.values.length + 1;
+                      accounts.name = _nameTxt.text;
+
                       final Box<Accounts> boxacc = Hive.box('Accounts');
                       await boxacc.add(accounts);
+                      accounts.id=boxacc.values.toList().firstWhere((element) => element.name==_nameTxt.text).id;
+
+
+                      transactions.id = accounts.id;
+                      transactions.status = isswitch;
+                      transactions.price = int.parse(outputString);
+                      transactions.description =
+                      _infoTxt.text.isNotEmpty ? _infoTxt.text : '';
+
+                      transactions.date = '${g.toJalali().year}/${g.toJalali().month}/${g.toJalali().day}';
+                      transactions.time = temptime;
+
+                      final Box<Transactions> boxtrx = Hive.box('transactions');
+                      await boxtrx.add(transactions);
+
 
                       Navigator.pop(context);
                       Navigator.pop(context);

@@ -9,6 +9,7 @@ import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
 import 'package:payment/screens/removeAccounts.dart';
 import 'package:payment/services/saveFile.dart';
+import 'package:payment/widgets/deletedAllDialogSetting.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 // import 'package:shamsi_date/shamsi_date.dart';
@@ -123,12 +124,12 @@ class _SettingpageState extends State<Settingpage> {
     final themeData = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: themeData.scaffoldBackgroundColor,
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(16.0),
         child:
-            GridView.count(crossAxisSpacing: 16, crossAxisCount: 2, children: [
+            GridView.count(crossAxisSpacing: 8, crossAxisCount: 3, children: [
           _ItemsSetting(
             themeData: themeData,
             title: 'تغییر نام',
@@ -185,12 +186,26 @@ class _SettingpageState extends State<Settingpage> {
                     builder: (context) => RemoveAccounts(),
                   ));
             },
-          ),_ItemsSetting(
+          ),
+          _ItemsSetting(
             themeData: themeData,
             title: 'درباره ما',
             icon: Icons.account_box_rounded,
             onTop: () {
               aboutalert(context, themeData);
+            },
+          ),
+          _ItemsSetting(
+            themeData: themeData,
+            title: 'حذف همه اطلاعات',
+            icon: Icons.folder_delete,
+            onTop: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return DeletedAllDialogSetting();
+                },
+              );
             },
           ),
         ]),
@@ -362,7 +377,7 @@ class _ItemsSetting extends StatelessWidget {
     return InkWell(
       onTap: () => onTop(),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         child: Container(
           width: 130,
           height: 180,
@@ -370,25 +385,31 @@ class _ItemsSetting extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
               //border: Border.all(color: Colors.deepPurple,width: 2),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.deepPurple.withOpacity(0.2), blurRadius: 15)
-              ]),
+              // boxShadow: [
+              //   BoxShadow(
+              //       color: Colors.deepPurple.withOpacity(0.2), blurRadius: 15)
+              // ]
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                size: 65,
+                size: 45,
                 color: Colors.deepPurple,
               ),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: themeData.textTheme.headline3!.copyWith(
-                  color: Colors.deepPurple,
-                  fontSize: 16,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+                child: FittedBox(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: themeData.textTheme.headline3!.copyWith(
+                      color: Colors.deepPurple,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               )
             ],
@@ -398,6 +419,7 @@ class _ItemsSetting extends StatelessWidget {
     );
   }
 }
+
 aboutalert(BuildContext context, ThemeData themeData) {
   AlertDialog alert = AlertDialog(
     shape: RoundedRectangleBorder(
@@ -416,27 +438,33 @@ aboutalert(BuildContext context, ThemeData themeData) {
         .copyWith(color: Colors.white, fontSize: 18),
     contentPadding: const EdgeInsets.all(8),
     actions: [
-      Center(child: Text('اینجا یه متن مینویسم.\nReza.najafi1871@gmail.com',textAlign: TextAlign.center,)),
-  SizedBox(height: 32,)
-  ,TextButton(
+      Center(
+          child: Text(
+        'اینجا یه متن مینویسم.\nReza.najafi1871@gmail.com',
+        textAlign: TextAlign.center,
+      )),
+      SizedBox(
+        height: 32,
+      ),
+      TextButton(
           onPressed: () async {
             Navigator.pop(context);
           },
           child: Container(
-            //height: 50,
-            //width: 150,
+              //height: 50,
+              //width: 150,
               decoration: BoxDecoration(
                   color: themeData.primaryColor,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      ' ! کافیه',
-                      style: themeData.textTheme.headline3!
-                          .copyWith(fontSize: 20, color: Colors.white),
-                    ),
-                  ))))
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ' ! کافیه',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              ))))
     ],
   );
 
