@@ -48,9 +48,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: const Color(0xfff4f1f1),
           colorScheme: const ColorScheme.light(
-              primary: Color(0xff00aeff),
+              //primary: Color(0xff00aeff),
+            primaryContainer: Color(0xff2196f3),
+              primary: Color(0xff00b894),
+              onTertiary: Color(0xff737395),
+              error: Color(0xfff32149),
               onPrimary: Colors.white,
-              secondary: Color(0xffb8b8b8),
+              secondary: Color(0xffedf2f5),
               onSecondary: Colors.black),
 
           textTheme: TextTheme(
@@ -117,11 +121,11 @@ class _BottonNavigiton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 75,
+      height: 68,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10)
+          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5)
         ],
       ),
       child: SizedBox(
@@ -201,6 +205,8 @@ class _ItemBottonNavigition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData=Theme.of(context);
+
     return InkWell(
       onTap: () {
         onTop();
@@ -211,29 +217,29 @@ class _ItemBottonNavigition extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300), // مدت زمان انیمیشن
-              width: active ? 35 : 0, // عرض مورد نظر به جای 35
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
+            // AnimatedContainer(
+            //   duration: Duration(milliseconds: 300), // مدت زمان انیمیشن
+            //   width: active ? 35 : 0, // عرض مورد نظر به جای 35
+            //   height: 4,
+            //   decoration: BoxDecoration(
+            //     color: themeData.colorScheme.primary,
+            //     borderRadius: BorderRadius.circular(2),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(3),
               child: SvgPicture.asset(
                 'assets/images/svgs/$iconpath',
                 width: 30,
                 colorFilter: active
-                    ? const ColorFilter.mode(Colors.deepPurple, BlendMode.srcIn)
+                    ? ColorFilter.mode(themeData.colorScheme.primary, BlendMode.srcIn)
                     : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
                 //semanticsLabel: 'A red up arrow'
               ),
             ),
             Visibility(
                 visible: active?true:false,
-                child: Text(title,style: Theme.of(context).textTheme.subtitle2!.copyWith(color: Colors.deepPurple,fontSize: 10),))
+                child: Text(title,style: Theme.of(context).textTheme.subtitle2!.copyWith(color: themeData.colorScheme.primary,fontSize: 10),))
           ],
         ),
       ),

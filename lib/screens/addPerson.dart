@@ -64,7 +64,7 @@ class _AddPersonState extends State<AddPerson> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'افزودن به حساب',
+                    'بدهکاری',
                     style: themeData.textTheme.subtitle1,
                   ),
                   const SizedBox(
@@ -74,9 +74,9 @@ class _AddPersonState extends State<AddPerson> {
                     scale: 1.5,
                     child: Switch(
                       // thumb color (round icon)
-                      activeColor: const Color.fromRGBO(21, 235, 5, 1),
+                      activeColor: themeData.colorScheme.primaryContainer,
                       activeTrackColor: Colors.black.withOpacity(0.3),
-                      inactiveThumbColor: const Color.fromARGB(255, 244, 53, 5),
+                      inactiveThumbColor: themeData.colorScheme.error,
                       inactiveTrackColor: Colors.grey.shade400,
                       //splashRadius: 50.0,
                       // boolean variable value
@@ -92,7 +92,7 @@ class _AddPersonState extends State<AddPerson> {
                   const SizedBox(
                     width: 6,
                   ),
-                  Text('کسر از حساب', style: themeData.textTheme.subtitle1),
+                  Text('بستانکاری', style: themeData.textTheme.subtitle1),
                 ],
               ),
               Padding(

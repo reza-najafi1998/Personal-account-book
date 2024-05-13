@@ -188,12 +188,7 @@ class Itemlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = Hive.box<Accounts>('Accounts');
-    String personName = box.values
-        .toList()
-        .firstWhere((element) => element.id == personid)
-        .name
-        .toString();
+    //final box = Hive.box<Accounts>('Accounts');
 
     DateTime notifydatetimemiladi = DateTime(
       int.parse(payloadNotify.substring(0, 4)),
@@ -225,7 +220,7 @@ class Itemlist extends StatelessWidget {
                 width: 50,
                 //height:10,
                 decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 28, 4),
+                    color: themeData.colorScheme.error,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         bottomLeft: Radius.circular(20))),
@@ -367,7 +362,7 @@ class Itemlist extends StatelessWidget {
           width: double.infinity,
           height: 45,
           decoration: BoxDecoration(
-              color: Colors.deepPurpleAccent,
+              color: themeData.colorScheme.primary,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16))),
           child: Center(child: Text('حذف یاد آور'))),
@@ -388,7 +383,7 @@ class Itemlist extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.error,
-                    color: Colors.deepPurpleAccent,
+                    color: themeData.colorScheme.onTertiary,
                   ),
                   SizedBox(
                     width: 8,
@@ -427,7 +422,7 @@ class Itemlist extends StatelessWidget {
                 //height: 50,
                 //width: 150,
                 decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: themeData.colorScheme.error,
                     borderRadius: BorderRadius.circular(15)),
                 child: Center(
                     child: Padding(

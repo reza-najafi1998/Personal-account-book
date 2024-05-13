@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/screens/addReminder.dart';
 import 'package:payment/screens/addTransaction.dart';
@@ -41,7 +42,7 @@ class _ListTransactionState extends State<ListTransaction> {
           width: 150,
           height: 50,
           decoration: BoxDecoration(
-              color: Colors.deepPurple,
+              color: themeData.colorScheme.primary,
               borderRadius: BorderRadius.circular(30)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -70,57 +71,78 @@ class _ListTransactionState extends State<ListTransaction> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: themeData.scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
+                  Row(
+                    children: [
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     color: themeData.colorScheme.secondary,
+                      //     borderRadius: BorderRadius.circular(8)
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                      //     child: Column(
+                      //       children: [
+                      //         SvgPicture.asset('assets/images/svgs/help.svg',width: 25),
+                      //         Text('راهنما',style: themeData.textTheme.subtitle1!.copyWith(fontSize: 10),)
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      SizedBox(width: 8,),
+                      Container(
                         decoration: BoxDecoration(
                             color: themeData.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(8)),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                          child: Row(
-                            children: [
-                              Directionality(
-                                textDirection: TextDirection.rtl,
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  hint: Text(
-                                    'مرتب سازی',
-                                    style: themeData.textTheme.subtitle1!
-                                        .copyWith(fontSize: 12),
+                          padding: const EdgeInsets.all(4.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: themeData.scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                              child: Row(
+                                children: [
+                                  Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: DropdownButton<String>(
+                                      isDense: true,
+                                      hint: Text(
+                                        'مرتب سازی',
+                                        style: themeData.textTheme.subtitle1!
+                                            .copyWith(fontSize: 12),
+                                      ),
+                                      icon: Icon(Icons.arrow_drop_down),
+                                      style: themeData.textTheme.subtitle1!
+                                          .copyWith(fontSize: 10),
+                                      items: <String>['نزولی', 'صعودی']
+                                          .map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Directionality(
+                                              textDirection: TextDirection.rtl,
+                                              child: Text(value)),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value == 'نزولی') {
+                                            issort = false;
+                                          } else if (value == 'صعودی') {
+                                            issort = true;
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  style: themeData.textTheme.subtitle1!
-                                      .copyWith(fontSize: 10),
-                                  items: <String>['نزولی', 'صعودی']
-                                      .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Directionality(
-                                          textDirection: TextDirection.rtl,
-                                          child: Text(value)),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (value == 'نزولی') {
-                                        issort = false;
-                                      } else if (value == 'صعودی') {
-                                        issort = true;
-                                      }
-                                    });
-                                  },
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
+
+                    ],
                   ),
                   Text(
                     'لیست تراکنش ها',
@@ -145,7 +167,7 @@ class _ListTransactionState extends State<ListTransaction> {
                   height: 70,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.deepPurpleAccent),
+                      color: themeData.colorScheme.primaryContainer,),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -185,6 +207,18 @@ class _ListTransactionState extends State<ListTransaction> {
                         },
                       ),
                     ),
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: themeData.colorScheme.secondary
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('برای حذف یا ویرایش تراکنش ، روی تراکنش ضربه بزنید و نگهدارید.',style: themeData.textTheme.subtitle1!.copyWith(fontSize: 12,color: themeData.colorScheme.onTertiary),),
+                          ),
+                        )),
                     SizedBox(
                       height: 80,
                     )
@@ -300,8 +334,8 @@ class _ItemHesabList extends StatelessWidget {
                     height: 40,
                     decoration: BoxDecoration(
                         color: trxitem.status
-                            ? const Color.fromARGB(255, 4, 246, 28)
-                            : const Color.fromARGB(255, 246, 28, 4),
+                            ?  themeData.colorScheme.primaryContainer
+                            : themeData.colorScheme.error,
                         borderRadius: BorderRadius.circular(15)),
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -433,7 +467,7 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
+            color: themeData.colorScheme.primary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16), topRight: Radius.circular(16))),
         child: Center(child: Text('ویرایش تراکنش'))),
@@ -453,7 +487,7 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                color: themeData.colorScheme.secondary.withOpacity(0.5),
+                color: themeData.colorScheme.secondary,
                 borderRadius: BorderRadius.circular(15)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -485,8 +519,8 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
               children: [
                 Flexible(
                   flex: 1,
-                  child: InkWell(
-                    onTap: () async {
+                  child: TextButton(
+                    onPressed: () async {
                       await trxitem.delete();
 
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -499,22 +533,22 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.red),
+                          color: themeData.colorScheme.error),
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: Text(
                             'حذف',
-                            style: TextStyle(color: Colors.white, fontSize: 13),
+                            style: themeData.textTheme.subtitle1!.copyWith(color: Colors.white),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 16,
-                ),
+                // SizedBox(
+                //   width: 16,
+                // ),
                 Flexible(
                   flex: 1,
                   child: TextButton(
@@ -531,13 +565,13 @@ showAlertDialog(BuildContext context, Transactions trxitem) {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.blue),
+                          color: themeData.colorScheme.primaryContainer),
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: Text(
                             'ویرایش',
-                            style: TextStyle(color: Colors.white, fontSize: 13),
+                            style: themeData.textTheme.subtitle1!.copyWith(color: Colors.white),
                           ),
                         ),
                       ),

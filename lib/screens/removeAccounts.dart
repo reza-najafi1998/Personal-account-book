@@ -33,7 +33,7 @@ class _RemoveAccountsState extends State<RemoveAccounts> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
-                      color: const Color.fromARGB(255, 175, 5, 167),
+                      color: themeData.colorScheme.primary,
                       width: 2)),
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
@@ -50,15 +50,14 @@ class _RemoveAccountsState extends State<RemoveAccounts> {
                         hintTextDirection: TextDirection.rtl,
                         border: InputBorder.none,
                         hintText: 'سریع پیداش کن...',
-                        prefixIcon: Image.asset(
-                          'assets/images/png/search.png',
-                          scale: 10,
-                        )),
+                        prefixIcon: Icon(Icons.person_search,size: 35,)
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+
           ValueListenableBuilder(
             valueListenable: boxacc.listenable(),
             builder: (context, value, child) {
@@ -187,7 +186,7 @@ class _ItemHesabListState extends State<_ItemHesabList> {
                     width: 50,
                     height: 70,
                     decoration: BoxDecoration(
-                        color:  const Color.fromARGB(255, 246, 28, 4),
+                        color:  widget.themeData.colorScheme.error,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomLeft: Radius.circular(20))),
                     child: Padding(
                       padding: const EdgeInsets.all(0.0),
@@ -207,8 +206,8 @@ class _ItemHesabListState extends State<_ItemHesabList> {
                   height: 40,
                   decoration: BoxDecoration(
                       color: widget.state
-                          ? const Color.fromARGB(50, 4, 246, 28)
-                          : const Color.fromARGB(50, 246, 28, 4),
+                          ? widget.themeData.colorScheme.primaryContainer.withOpacity(0.3)
+                          : widget.themeData.colorScheme.error.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(
                     padding: const EdgeInsets.all(0.0),
@@ -328,7 +327,7 @@ deleteaccount(BuildContext context, ThemeData themeData,Accounts accitem) {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
+            color: themeData.colorScheme.primary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16), topRight: Radius.circular(16))),
         child: Center(child: Text('حذف حساب'))),
@@ -347,7 +346,7 @@ deleteaccount(BuildContext context, ThemeData themeData,Accounts accitem) {
           child:
           Row(
             children: [
-              Icon(Icons.error,color: Colors.deepPurpleAccent,),
+              Icon(Icons.error,color: themeData.colorScheme.onTertiary,),
               SizedBox(width: 8,)
               ,Text('با حذف حساب تمام تراکنش ها حذف و\nغیر قابل بازگردانی خواهد شد.',
                 style: themeData.textTheme.headline3!.copyWith(fontSize: 15,color: Colors.black),),
@@ -376,7 +375,7 @@ deleteaccount(BuildContext context, ThemeData themeData,Accounts accitem) {
             //height: 50,
             //width: 150,
               decoration: BoxDecoration(
-                  color: Colors.redAccent,
+                  color: themeData.colorScheme.error,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(

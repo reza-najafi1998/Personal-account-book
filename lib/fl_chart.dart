@@ -32,14 +32,14 @@ class MyPieChart extends StatelessWidget {
                   //item 1
                   PieChartSectionData(
                       value: bedehi+talab==0?1:bedehi * (-1),
-                      color: const Color(0xfff82442),
+                      color: themeData.colorScheme.error,
                       radius: 25,
                       showTitle: false),
 
                   //item2
                   PieChartSectionData(
                     value: bedehi+talab==0?1:talab,
-                    color: const Color(0xff00f53f),
+                    color:  themeData.colorScheme.primaryContainer,
                     radius: 25,
                     showTitle: false,
                   )

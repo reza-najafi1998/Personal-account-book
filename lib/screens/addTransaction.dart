@@ -97,9 +97,9 @@ class _AddTransactionState extends State<AddTransaction> {
                     scale: 1.5,
                     child: Switch(
                       // thumb color (round icon)
-                      activeColor: const Color.fromRGBO(21, 235, 5, 1),
+                      activeColor: themeData.colorScheme.primaryContainer,
                       activeTrackColor: Colors.black.withOpacity(0.3),
-                      inactiveThumbColor: const Color.fromARGB(255, 244, 53, 5),
+                      inactiveThumbColor: themeData.colorScheme.error,
                       inactiveTrackColor: Colors.grey.shade400,
                       //splashRadius: 50.0,
                       // boolean variable value
@@ -115,7 +115,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   const SizedBox(
                     width: 6,
                   ),
-                  Text('طلبکاری', style: themeData.textTheme.subtitle1),
+                  Text('بستانکاری', style: themeData.textTheme.subtitle1),
                 ],
               ),
               Padding(

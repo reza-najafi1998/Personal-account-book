@@ -267,7 +267,7 @@ class Register extends StatelessWidget {
                       width: 200,
                       height: 50,
                       decoration: BoxDecoration(
-                          color: themeData.colorScheme.secondary,
+                          color: themeData.colorScheme.onTertiary,
                           borderRadius: BorderRadius.circular(25)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
