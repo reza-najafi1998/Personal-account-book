@@ -93,6 +93,10 @@ class _AddReminderState extends State<AddReminder> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _infoTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _infoTxt.text.length));
+                    },
                     controller: _infoTxt,
                     maxLength: 60,
                     textAlign: TextAlign.right,

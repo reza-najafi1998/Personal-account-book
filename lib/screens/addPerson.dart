@@ -49,8 +49,12 @@ class _AddPersonState extends State<AddPerson> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _nameTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _nameTxt.text.length));
+                    },
                     controller: _nameTxt,
-                    maxLength: 15,
+                    maxLength: 30,
                     textAlign: TextAlign.right,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.switch_account),
@@ -111,7 +115,7 @@ class _AddPersonState extends State<AddPerson> {
                       }
                     },
                     controller: _amountTxt,
-                    maxLength: 15,
+                    maxLength: 17,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     inputFormatters: [CustomAmountFormatter()],
@@ -129,6 +133,10 @@ class _AddPersonState extends State<AddPerson> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _infoTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _infoTxt.text.length));
+                    },
                     controller: _infoTxt,
                     maxLength: 50,
                     textAlign: TextAlign.right,

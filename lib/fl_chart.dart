@@ -47,8 +47,8 @@ class MyPieChart extends StatelessWidget {
           ),
           Center(child: 
             Container(
-              width: 60,
-              height: 60,
+              width: 35,
+              height: 35,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 //color: talab>bedehi?const Color(0xff00f53f):const Color(0xfff82442),

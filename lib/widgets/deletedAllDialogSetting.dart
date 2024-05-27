@@ -100,8 +100,7 @@ class DeletedAllDialogSetting extends StatelessWidget {
                    await boxtrx.clear();
                    await boxdatauser.clear();
                    await boxacc.clear();
-
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SplashScreen(),));
+                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SplashScreen(),));
                   }
 
                 },

@@ -35,7 +35,7 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
           color: themeData.colorScheme.primary,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         ),
-        child: Center(child: Text('مرتب سازی لیست حساب')),
+        child: Center(child: Text('مرتب سازی لیست')),
       ),
       titleTextStyle: themeData.textTheme.headline3!.copyWith(color: Colors.white, fontSize: 18),
       contentPadding: const EdgeInsets.all(8),

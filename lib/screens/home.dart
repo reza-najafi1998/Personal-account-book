@@ -7,6 +7,7 @@ import 'package:payment/screens/addPerson.dart';
 import 'package:payment/calculatorHesab.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
+import 'package:payment/widgets/deletedPersonDialogHome.dart';
 import 'package:payment/widgets/sortedDialogHome.dart';
 import 'package:payment/widgets/draverWidget.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
@@ -160,9 +161,10 @@ class _HomeState extends State<Home> {
                                       height: 30,
                                       width: 30,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: themeData.colorScheme.onTertiary
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color:
+                                              themeData.colorScheme.onTertiary),
                                       child: Icon(
                                         Icons.calendar_month_outlined,
                                         size: 25,
@@ -179,19 +181,22 @@ class _HomeState extends State<Home> {
                                   builder: (context, valuee, child) {
                                     return Row(
                                       children: [
-                                        Directionality(
-                                          textDirection: ui.TextDirection.rtl,
-                                          child: Text(
-                                            'سلام ' +
-                                                boxdatauser.values
-                                                    .toList()[0]
-                                                    .name +
-                                                ' جان',
-                                            style: themeData
-                                                .textTheme.subtitle1!
-                                                .copyWith(
-                                                    color: themeData.colorScheme
-                                                        .onTertiary),
+                                        Container(
+                                          width: 200
+                                          ,child: Directionality(
+                                            textDirection: ui.TextDirection.rtl,
+                                            child: Text(
+
+                                                  boxdatauser.values
+                                                      .toList()[0]
+                                                      .name,
+                                              style: themeData
+                                                  .textTheme.subtitle1!
+                                                  .copyWith(
+                                                      color: themeData.colorScheme
+                                                          .onTertiary),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(
@@ -227,21 +232,53 @@ class _HomeState extends State<Home> {
                                     children: [
                                       Row(
                                         children: [
-                                          Text('تومان',
-                                              style: themeData
-                                                  .textTheme.headline3),
-                                          const SizedBox(
-                                            width: 3,
-                                          ),
-                                          Text(
-                                            replaceFarsiNumber(
-                                                value.format(hesab.talab())),
-                                            style: themeData
-                                                .textTheme.subtitle2!
-                                                .copyWith(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                'بستانکاری',
+                                                style: themeData
+                                                    .textTheme.subtitle1!
+                                                    .copyWith(fontSize: 12),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text('تومان',
+                                                      style: themeData
+                                                          .textTheme.headline3),
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                    child: FittedBox(
+                                                      child: Directionality(
+                                                        textDirection:ui.TextDirection.rtl ,
+                                                        child: Text(
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          replaceFarsiNumber(
+                                                              value.format(
+                                                                  hesab.talab())),
+                                                          style: themeData
+                                                              .textTheme
+                                                              .subtitle2!
+                                                              .copyWith(
+                                                                  height: 1,
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
                                           ),
                                           const SizedBox(
                                             width: 5,
@@ -267,21 +304,40 @@ class _HomeState extends State<Home> {
                                       ),
                                       Row(
                                         children: [
-                                          Text('تومان',
-                                              style: themeData
-                                                  .textTheme.headline3),
-                                          const SizedBox(
-                                            width: 3,
-                                          ),
-                                          Text(
-                                            replaceFarsiNumber(
-                                                value.format(hesab.bedehi())),
-                                            style: themeData
-                                                .textTheme.subtitle2!
-                                                .copyWith(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                'بدهکاری',
+                                                style: themeData
+                                                    .textTheme.subtitle1!
+                                                    .copyWith(fontSize: 12),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text('تومان',
+                                                      style: themeData
+                                                          .textTheme.headline3),
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(
+                                                    replaceFarsiNumber(
+                                                        value.format(
+                                                            hesab.bedehi())),
+                                                    style: themeData
+                                                        .textTheme.subtitle2!
+                                                        .copyWith(
+                                                            height: 1,
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(
                                             width: 5,
@@ -308,8 +364,8 @@ class _HomeState extends State<Home> {
                                     width: 15,
                                   ),
                                   SizedBox(
-                                      width: 130,
-                                      height: 130,
+                                      width: 110,
+                                      height: 110,
                                       child: MyPieChart(
                                         talab: hesab.talab().toDouble(),
                                         bedehi: hesab.bedehi().toDouble(),
@@ -356,17 +412,19 @@ class _HomeState extends State<Home> {
                           },
                           controller: _controller,
                           decoration: InputDecoration(
-
                               hintTextDirection: ui.TextDirection.rtl,
                               border: InputBorder.none,
                               hintText: 'سریع پیداش کن...',
-                              prefixIcon: Icon(Icons.person_search,size: 35,)
-                              
+                              prefixIcon: Icon(
+                                Icons.person_search,
+                                size: 35,
+                              )
+
                               // Image.asset(
                               //   'assets/images/png/search.png',
                               //   scale: 10,
                               // )
-                          ),
+                              ),
                         ),
                       ),
                     ),
@@ -431,7 +489,6 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: 8,
                                     ),
-                                    const Icon(Icons.account_balance_outlined),
                                   ],
                                 ),
                                 Text('لیست طرف حساب ها',
@@ -607,9 +664,25 @@ class _ItemHesabListState extends State<_ItemHesabList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
       child: InkWell(
-        onLongPress: () {
-          settingaccount(context, widget.themeData, widget.accitem);
+        onLongPress: () async {
+          bool x=await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return DeletedPersonDialogHome(
+                name: widget.name, accitem: widget.accitem,
+              );
+            },
+          );
+
+          if(x){
+            setState(() {
+
+            });
+          }
         },
+        // {
+        //   settingaccount(context, widget.themeData, widget.accitem);
+        // },
         onTap: () {
           Navigator.push(context, CupertinoPageRoute(builder: (context) {
             return ListTransaction(
@@ -617,17 +690,19 @@ class _ItemHesabListState extends State<_ItemHesabList> {
             );
           })).then((value) => setState(() {
                 hesab = CalculatorHesab(boxacc, boxtrx);
-              }));
+                FocusManager.instance.primaryFocus?.unfocus();
+          }));
         },
         child: Container(
-          width: 360,
+          width: double.infinity,
           height: 70,
           decoration: BoxDecoration(
             color: widget.themeData.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -654,49 +729,69 @@ class _ItemHesabListState extends State<_ItemHesabList> {
                             ),
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                          replaceFarsiNumber(
-                              value.format(int.parse(widget.price))),
-                          style: widget.themeData.textTheme.headline3!.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          )),
-                      Text(
-                        'تومان',
-                        style: widget.themeData.textTheme.headline3!.copyWith(
-                            color: Colors.black,
-                            height: 0.4,
-                            fontWeight: FontWeight.w100,
-                            fontSize: 13),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 230,
+                            child: Directionality(
+                              textDirection: ui.TextDirection.rtl,
+                              child: Text(widget.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: widget.themeData.textTheme.headline3!
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                           Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+
+                              children: [
+                                Text(
+                                  'تومان',
+                                  style: widget.themeData.textTheme.headline3!.copyWith(
+                                      color: Colors.black,
+                                      height: 0.4,
+                                      fontWeight: FontWeight.w100,
+                                      fontSize: 13),
+                                ),
+                                SizedBox(width: 8,),
+                                Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    replaceFarsiNumber(
+                                        value.format(int.parse(widget.price))),
+                                    style: widget.themeData.textTheme.headline3!
+                                        .copyWith(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    )),
+
+                              ],
+                            ),
+
+
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Image.asset(
+                        'assets/images/png/user.png',
+                        width: 45,
+                      ),
+                      const SizedBox(
+                        width: 6,
                       )
                     ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(widget.name,
-                      style: widget.themeData.textTheme.headline3!.copyWith(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Image.asset(
-                    'assets/images/png/user.png',
-                    width: 45,
-                  ),
-                  const SizedBox(
-                    width: 6,
                   )
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -765,8 +860,13 @@ settingaccount(BuildContext context, ThemeData themeData, Accounts accitem) {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: TextField(
+              onTap: () {
+                controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: controller.text.length));
+              },
+
             controller: controller,
-            maxLength: 8,
+            maxLength: 30,
             textAlign: TextAlign.right,
             decoration: InputDecoration(
                 counterText: "",

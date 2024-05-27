@@ -214,7 +214,7 @@ class Itemlist extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                deletenotify(context, themeData, personid, titleNotify);
+                deletenotify(context, themeData, personid, titleNotify,notifydatetimemiladi,notifyTime);
               },
               child: Container(
                 width: 50,
@@ -252,10 +252,17 @@ class Itemlist extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        titleNotify,
-                        style: themeData.textTheme.subtitle1!
-                            .copyWith(fontSize: 15),
+                      SizedBox(
+                        width: 180
+                        ,child: Directionality(
+                        textDirection: TextDirection.rtl,
+                          child: Text(
+                            titleNotify,
+                            overflow: TextOverflow.ellipsis
+                            ,style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 15),
+                          ),
+                        ),
                       ),
                       Text(' : عنوان',
                           style: themeData.textTheme.subtitle1!.copyWith(
@@ -353,7 +360,7 @@ class Itemlist extends StatelessWidget {
   }
 
   deletenotify(
-      BuildContext context, ThemeData themeData, int id, String title) {
+      BuildContext context, ThemeData themeData, int id, String title,DateTime datetime,TimeOfDay timeof) {
     AlertDialog alert = AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16))),
@@ -378,30 +385,23 @@ class Itemlist extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  Icon(
-                    Icons.error,
-                    color: themeData.colorScheme.onTertiary,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Row(
-                    children: [
 
-                      Text(
-                        'یادآور : ',
-                        style: themeData.textTheme.headline3!
-                            .copyWith(fontSize: 15, color: Colors.black),
-                      ),
-                      Text(
-                        '$title',
-                        style: themeData.textTheme.headline3!
-                            .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  Text(
+                    'شما در حال حذف یادآور با مشخصات زیر هستید.',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black),
+                  ),
+                  Text(
+                    ' عنوان : $title',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ' زمان : '+fixmonthdate(timeof.hour.toString())+':'+fixmonthdate(timeof.minute.toString())+'  '+datetime.toPersianDate(),
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
                   ),
                 ],
               )),

@@ -64,7 +64,7 @@ class Register extends StatelessWidget {
                               textDirection: TextDirection.rtl,
                               child: TextField(
                                 controller: _nameTxt,
-                                //maxLength: 8,
+                                maxLength: 20,
                                 enableSuggestions: false,
                                 // maxLines: 1,
                                 decoration: const InputDecoration(

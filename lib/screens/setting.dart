@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cafebazaar_flutter/cafebazaar_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -77,27 +78,11 @@ class _SettingpageState extends State<Settingpage> {
         var now = new DateTime.now();
         Gregorian g = Gregorian(now.year, now.month, now.day);
 
-        String temptime = now.hour.toString() +
-            '-' +
-            now.minute.toString() +
-            '-' +
-            now.second.toString();
+        String temptime = '${now.hour}-${now.minute}-${now.second}';
 
-        String tempdate = g
-            .toJalali()
-            .year
-            .toString() +
-            '-' +
-            g
-                .toJalali()
-                .month
-                .toString() +
-            '-' +
-            g
-                .toJalali()
-                .day
-                .toString();
-        String filename = tempdate + '-' + temptime;
+        String tempdate =
+            '${g.toJalali().year}-${g.toJalali().month}-${g.toJalali().day}';
+        String filename = 'Daftar Hesab $tempdate - $temptime';
 
         List<int> bytes = jsonString.codeUnits;
         saveFile(filename, jsonString);
@@ -138,17 +123,17 @@ class _SettingpageState extends State<Settingpage> {
       backgroundColor: themeData.scaffoldBackgroundColor,
       body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child:
+        padding: const EdgeInsets.all(16.0),
+        child:
             GridView.count(crossAxisSpacing: 8, crossAxisCount: 3, children: [
-                _ItemsSetting(
-                themeData: themeData,
-                title: 'تغییر نام',
-                  iconurl: 'assets/images/svgs/edit_account.svg',
-                onTop: () {
-          dialogChangeName(context, themeData);
-          print('object');
-          },
+          _ItemsSetting(
+            themeData: themeData,
+            title: 'تغییر نام',
+            iconurl: 'assets/images/svgs/edit_account.svg',
+            onTop: () {
+              dialogChangeName(context, themeData);
+              print('object');
+            },
           ),
           _ItemsSetting(
             themeData: themeData,
@@ -186,19 +171,18 @@ class _SettingpageState extends State<Settingpage> {
               }
             },
           ),
-          _ItemsSetting(
-            themeData: themeData,
-            title: 'حذف حساب افراد',
-            iconurl: 'assets/images/svgs/remove_person.svg',
-            onTop: () {
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => RemoveAccounts(),
-                  ));
-            },
-
-          ),
+          // _ItemsSetting(
+          //   themeData: themeData,
+          //   title: 'حذف حساب افراد',
+          //   iconurl: 'assets/images/svgs/remove_person.svg',
+          //   onTop: () {
+          //     Navigator.push(
+          //         context,
+          //         CupertinoPageRoute(
+          //           builder: (context) => RemoveAccounts(),
+          //         ));
+          //   },
+          // ),
           _ItemsSetting(
             themeData: themeData,
             title: 'درباره ما',
@@ -220,8 +204,32 @@ class _SettingpageState extends State<Settingpage> {
               );
             },
           ),
-          ]),
-    )),
+          _ItemsSetting(
+            themeData: themeData,
+            title: 'امتیاز بده',
+            iconurl: 'assets/images/svgs/rank.svg',
+            onTop: () async {
+
+              // final String appId = "ir.rezadev.payment";
+              //
+              // final String url = "bazaar://details?id=$appId";
+              // if (await canLaunch(url)) {
+              //   await launch(url);
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              //     content: Directionality(
+              //         textDirection: TextDirection.rtl,
+              //         child: Text('کافه بازار روی گوشی شما وجود ندارد!')),
+              //   ));
+              //   throw 'Could not launch $url';
+              // }
+              final _bazaar = CafebazaarFlutter.instance;
+              await _bazaar.openCommentForm("ir.rezadev.payment");
+              print('USER BACK TO YOUR APP');
+            },
+          ),
+        ]),
+      )),
     );
   }
 }
@@ -282,7 +290,7 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: TextField(
             controller: controller,
-            maxLength: 8,
+            maxLength: 20,
             textAlign: TextAlign.right,
             decoration: InputDecoration(
                 counterText: "",
@@ -316,20 +324,20 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
             }
           },
           child: Container(
-            //height: 50,
-            //width: 150,
+              //height: 50,
+              //width: 150,
               decoration: BoxDecoration(
                   color: themeData.primaryColor,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'ثبت',
-                      style: themeData.textTheme.headline3!
-                          .copyWith(fontSize: 20, color: Colors.white),
-                    ),
-                  ))))
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'ثبت',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              ))))
     ],
     content: SizedBox(
       //width: 150,
@@ -378,10 +386,12 @@ class _ItemsSetting extends StatelessWidget {
   final String iconurl;
   final Function() onTop;
 
-  const _ItemsSetting({super.key,
-    required this.themeData,
-    required this.title,
-    required this.onTop, required this.iconurl});
+  const _ItemsSetting(
+      {super.key,
+      required this.themeData,
+      required this.title,
+      required this.onTop,
+      required this.iconurl});
 
   @override
   Widget build(BuildContext context) {
@@ -439,9 +449,10 @@ aboutalert(BuildContext context, ThemeData themeData) {
   String? encodeQueryParameters(Map<String, String> params) {
     return params.entries
         .map((MapEntry<String, String> e) =>
-    '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
         .join('&');
   }
+
 // ···
   final Uri emailLaunchUri = Uri(
     scheme: 'mailto',
@@ -450,8 +461,6 @@ aboutalert(BuildContext context, ThemeData themeData) {
       'subject': 'دفتر حساب 1.0.1',
     }),
   );
-
-
 
   AlertDialog alert = AlertDialog(
     shape: RoundedRectangleBorder(
@@ -472,13 +481,13 @@ aboutalert(BuildContext context, ThemeData themeData) {
     actions: [
       Center(
           child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'امید وارم از این اپلیکیشن لذت ببرید\nسعی می کنم مرتب آپدیت بزارم و بهترش کنم',
-              textAlign: TextAlign.center,
-              style: themeData.textTheme.subtitle1,
-            ),
-          )),
+        textDirection: TextDirection.rtl,
+        child: Text(
+          'امید وارم از این اپلیکیشن لذت ببرید\nسعی می کنم مرتب آپدیت بزارم و بهترش کنم',
+          textAlign: TextAlign.center,
+          style: themeData.textTheme.subtitle1,
+        ),
+      )),
       SizedBox(
         height: 16,
       ),
@@ -487,39 +496,39 @@ aboutalert(BuildContext context, ThemeData themeData) {
             launchUrl(emailLaunchUri);
           },
           child: Container(
-            //height: 50,
-            //width: 150,
+              //height: 50,
+              //width: 150,
               decoration: BoxDecoration(
                   color: themeData.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      ' تماس با ما',
-                      style: themeData.textTheme.headline3!
-                          .copyWith(fontSize: 20, color: Colors.white),
-                    ),
-                  )))),
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ' تماس با ما',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              )))),
       TextButton(
           onPressed: () async {
             Navigator.pop(context);
           },
           child: Container(
-            //height: 50,
-            //width: 150,
+              //height: 50,
+              //width: 150,
               decoration: BoxDecoration(
                   color: themeData.colorScheme.onTertiary,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      ' ! کافیه',
-                      style: themeData.textTheme.headline3!
-                          .copyWith(fontSize: 20, color: Colors.white),
-                    ),
-                  ))))
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ' ! کافیه',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              ))))
     ],
   );
 

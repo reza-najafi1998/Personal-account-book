@@ -52,6 +52,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   flutter_spinkit: ^5.2.1
   url_launcher: ^6.1.11
+  cafebazaar_flutter: ^1.0.2
 
 dev_dependencies:
   flutter_test:
