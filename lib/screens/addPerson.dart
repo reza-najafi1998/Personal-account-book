@@ -49,8 +49,12 @@ class _AddPersonState extends State<AddPerson> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _nameTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _nameTxt.text.length));
+                    },
                     controller: _nameTxt,
-                    maxLength: 15,
+                    maxLength: 30,
                     textAlign: TextAlign.right,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.switch_account),
@@ -64,7 +68,7 @@ class _AddPersonState extends State<AddPerson> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'افزودن به حساب',
+                    'بدهکاری',
                     style: themeData.textTheme.subtitle1,
                   ),
                   const SizedBox(
@@ -74,9 +78,9 @@ class _AddPersonState extends State<AddPerson> {
                     scale: 1.5,
                     child: Switch(
                       // thumb color (round icon)
-                      activeColor: const Color.fromRGBO(21, 235, 5, 1),
+                      activeColor: themeData.colorScheme.primaryContainer,
                       activeTrackColor: Colors.black.withOpacity(0.3),
-                      inactiveThumbColor: const Color.fromARGB(255, 244, 53, 5),
+                      inactiveThumbColor: themeData.colorScheme.error,
                       inactiveTrackColor: Colors.grey.shade400,
                       //splashRadius: 50.0,
                       // boolean variable value
@@ -92,7 +96,7 @@ class _AddPersonState extends State<AddPerson> {
                   const SizedBox(
                     width: 6,
                   ),
-                  Text('کسر از حساب', style: themeData.textTheme.subtitle1),
+                  Text('بستانکاری', style: themeData.textTheme.subtitle1),
                 ],
               ),
               Padding(
@@ -111,7 +115,7 @@ class _AddPersonState extends State<AddPerson> {
                       }
                     },
                     controller: _amountTxt,
-                    maxLength: 15,
+                    maxLength: 17,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     inputFormatters: [CustomAmountFormatter()],
@@ -129,6 +133,10 @@ class _AddPersonState extends State<AddPerson> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _infoTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _infoTxt.text.length));
+                    },
                     controller: _infoTxt,
                     maxLength: 50,
                     textAlign: TextAlign.right,

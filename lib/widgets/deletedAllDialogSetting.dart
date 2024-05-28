@@ -23,7 +23,7 @@ class DeletedAllDialogSetting extends StatelessWidget {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-          color: Colors.deepPurpleAccent,
+          color: themeData.colorScheme.primary,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         ),
@@ -54,7 +54,7 @@ class DeletedAllDialogSetting extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 8),
                     child: Icon(
                       Icons.error,
-                      color: Colors.red,
+                      color: themeData.colorScheme.error,
                     ),
                   )
                 ],
@@ -100,14 +100,13 @@ class DeletedAllDialogSetting extends StatelessWidget {
                    await boxtrx.clear();
                    await boxdatauser.clear();
                    await boxacc.clear();
-
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SplashScreen(),));
+                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SplashScreen(),));
                   }
 
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: themeData.colorScheme.error,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Center(

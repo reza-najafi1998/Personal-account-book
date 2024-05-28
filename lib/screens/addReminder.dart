@@ -93,6 +93,10 @@ class _AddReminderState extends State<AddReminder> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _infoTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _infoTxt.text.length));
+                    },
                     controller: _infoTxt,
                     maxLength: 60,
                     textAlign: TextAlign.right,
@@ -107,6 +111,7 @@ class _AddReminderState extends State<AddReminder> {
               InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {
+                  print('+++++++++++++++++++');
                   showDateDialog(
                     context,
                     themeData,
@@ -114,6 +119,8 @@ class _AddReminderState extends State<AddReminder> {
                     (dateselected) {
                       setState(() {
                         jalaliselected = dateselected;
+                        print(jalaliselected);
+                        print('+++++++++++++++++++');
                       });
                     },
                   );
@@ -122,7 +129,7 @@ class _AddReminderState extends State<AddReminder> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       border:
-                          Border.all(color: themeData.colorScheme.secondary)),
+                          Border.all(color: themeData.colorScheme.onTertiary)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -168,7 +175,7 @@ class _AddReminderState extends State<AddReminder> {
                   //width: 170,
                   decoration: BoxDecoration(
                       border: Border.all(
-                          width: 2, color: Colors.deepPurple),
+                          width: 2, color: themeData.colorScheme.primary),
                       borderRadius: BorderRadius.circular(20)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -178,7 +185,7 @@ class _AddReminderState extends State<AddReminder> {
                         width: double.infinity,
                         height: 45,
                         decoration: BoxDecoration(
-                            color: Colors.deepPurple,
+                            color: themeData.colorScheme.primary,
                             borderRadius: BorderRadius.only(
                               topRight: Radius.circular(18),
                               topLeft: Radius.circular(18),

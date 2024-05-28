@@ -32,10 +32,10 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-          color: Colors.deepPurpleAccent,
+          color: themeData.colorScheme.primary,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         ),
-        child: Center(child: Text('مرتب سازی لیست حساب')),
+        child: Center(child: Text('مرتب سازی لیست')),
       ),
       titleTextStyle: themeData.textTheme.headline3!.copyWith(color: Colors.white, fontSize: 18),
       contentPadding: const EdgeInsets.all(8),
@@ -60,7 +60,7 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
               ),
               Text('نام'),
               Radio(
-                activeColor: Colors.deepPurple,
+                activeColor: themeData.colorScheme.primaryContainer,
                 value: true,
                 groupValue: selectedValues.selectedAccordingValue,
                 onChanged: (value) {
@@ -79,7 +79,7 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
             children: [
               Text('صعودی'),
               Radio(
-                activeColor: Colors.deepPurple,
+                activeColor: themeData.colorScheme.primaryContainer,
                 value: false,
                 groupValue: selectedValues.selectedAsValue,
                 onChanged: (value) {
@@ -90,7 +90,7 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
               ),
               Text('نزولی'),
               Radio(
-                activeColor: Colors.deepPurple,
+                activeColor: themeData.colorScheme.primaryContainer,
                 value: true,
                 groupValue: selectedValues.selectedAsValue,
                 onChanged: (value) {

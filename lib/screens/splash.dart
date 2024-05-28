@@ -44,14 +44,19 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Image.asset(
                 'assets/images/png/onboarding/logo.png',
-                scale: 5,
+                scale: 2,
               ),
               SizedBox(
                 height: 32,
               ),
-              SpinKitThreeBounce(
-                size: 50,
-                color: Colors.yellow,
+              Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text('هیچ طلبی فراموش نمیشه...',style: theme.textTheme.subtitle1,)),
+              SizedBox(
+                height: 32,
+              ),SpinKitThreeBounce(
+                size: 30,
+                color: theme.colorScheme.primary,
               )
             ],
           ),
@@ -60,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
           textDirection: TextDirection.rtl,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('دفتر حساب ', style: theme.textTheme.subtitle1),
+            child: Text('دفتر حساب 1.0.1', style: theme.textTheme.subtitle1),
           ),
         ),
       ],

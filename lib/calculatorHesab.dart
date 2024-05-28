@@ -16,6 +16,16 @@ class CalculatorHesab {
     }
   }
 
+  String getname(int id) {
+    String name='';
+    List<Accounts> acc_names = [];
+    for (var data in acc.values.where((element) => element.id==id)
+          .toList()) {
+      name=data.name;
+    }
+    return name;
+  }
+
   int bedehi() {
     int bedehi = 0;
     for (var data in acc.values) {

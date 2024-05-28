@@ -26,7 +26,7 @@ ItemOnbording a3 = ItemOnbording(
     'notify_vector.png');
 ItemOnbording a4 = ItemOnbording(
     'امنیت اطلاعات',
-    'با پشتیبان گیری آفلاین از اطلاعاتون محافظت کنید و هنگام تغییر گوشی به گوشی جدید منتقل کنید.',
+    'با پشتیبان گیری آفلاین از اطلاعاتتون محافظت کنید و هنگام تغییر گوشی به گوشی جدید منتقل کنید.',
     'backup_vector.png');
 
 class OnBoardingScreen extends StatefulWidget {

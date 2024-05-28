@@ -64,7 +64,7 @@ class Register extends StatelessWidget {
                               textDirection: TextDirection.rtl,
                               child: TextField(
                                 controller: _nameTxt,
-                                //maxLength: 8,
+                                maxLength: 20,
                                 enableSuggestions: false,
                                 // maxLines: 1,
                                 decoration: const InputDecoration(
@@ -267,7 +267,7 @@ class Register extends StatelessWidget {
                       width: 200,
                       height: 50,
                       decoration: BoxDecoration(
-                          color: themeData.colorScheme.secondary,
+                          color: themeData.colorScheme.onTertiary,
                           borderRadius: BorderRadius.circular(25)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,

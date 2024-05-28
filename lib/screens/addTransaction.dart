@@ -97,9 +97,9 @@ class _AddTransactionState extends State<AddTransaction> {
                     scale: 1.5,
                     child: Switch(
                       // thumb color (round icon)
-                      activeColor: const Color.fromRGBO(21, 235, 5, 1),
+                      activeColor: themeData.colorScheme.primaryContainer,
                       activeTrackColor: Colors.black.withOpacity(0.3),
-                      inactiveThumbColor: const Color.fromARGB(255, 244, 53, 5),
+                      inactiveThumbColor: themeData.colorScheme.error,
                       inactiveTrackColor: Colors.grey.shade400,
                       //splashRadius: 50.0,
                       // boolean variable value
@@ -115,7 +115,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   const SizedBox(
                     width: 6,
                   ),
-                  Text('طلبکاری', style: themeData.textTheme.subtitle1),
+                  Text('بستانکاری', style: themeData.textTheme.subtitle1),
                 ],
               ),
               Padding(
@@ -134,7 +134,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       }
                     },
                     controller: _amountTxt,
-                    maxLength: 15,
+                    maxLength: 17,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     inputFormatters: [CustomAmountFormatter()],
@@ -152,6 +152,10 @@ class _AddTransactionState extends State<AddTransaction> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
+                    onTap: () {
+                      _infoTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _infoTxt.text.length));
+                    },
                     controller: _infoTxt,
                     maxLength: 50,
                     textAlign: TextAlign.right,
@@ -200,9 +204,11 @@ class _AddTransactionState extends State<AddTransaction> {
                       widget.trx.time = now.hour.toString() + ':' + now.minute
                           .toString() + ':' + now.second.toString();
                       await box.add(widget.trx);
+
+
                     }
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(true); // برگرد به صفحه قبلی با ارسال پارامتر
+                    Navigator.of(context).pop(true); // برگرد به صفحه قبلی با ارسال پارامتر
                   }else{
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Directionality(

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cafebazaar_flutter/cafebazaar_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
@@ -12,6 +14,7 @@ import 'package:payment/services/saveFile.dart';
 import 'package:payment/widgets/deletedAllDialogSetting.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:shamsi_date/shamsi_date.dart';
 
 class Settingpage extends StatefulWidget {
@@ -75,18 +78,11 @@ class _SettingpageState extends State<Settingpage> {
         var now = new DateTime.now();
         Gregorian g = Gregorian(now.year, now.month, now.day);
 
-        String temptime = now.hour.toString() +
-            '-' +
-            now.minute.toString() +
-            '-' +
-            now.second.toString();
+        String temptime = '${now.hour}-${now.minute}-${now.second}';
 
-        String tempdate = g.toJalali().year.toString() +
-            '-' +
-            g.toJalali().month.toString() +
-            '-' +
-            g.toJalali().day.toString();
-        String filename = tempdate + '-' + temptime;
+        String tempdate =
+            '${g.toJalali().year}-${g.toJalali().month}-${g.toJalali().day}';
+        String filename = 'Daftar Hesab $tempdate - $temptime';
 
         List<int> bytes = jsonString.codeUnits;
         saveFile(filename, jsonString);
@@ -133,7 +129,7 @@ class _SettingpageState extends State<Settingpage> {
           _ItemsSetting(
             themeData: themeData,
             title: 'تغییر نام',
-            icon: Icons.person,
+            iconurl: 'assets/images/svgs/edit_account.svg',
             onTop: () {
               dialogChangeName(context, themeData);
               print('object');
@@ -141,8 +137,8 @@ class _SettingpageState extends State<Settingpage> {
           ),
           _ItemsSetting(
             themeData: themeData,
-            title: 'دریافت نسخه پشتبانی',
-            icon: Icons.backup,
+            title: 'دریافت نسخه پشتیبانی',
+            iconurl: 'assets/images/svgs/backup.svg',
             onTop: () async {
               showAlertDialog(context, 'لطفا صبر کنید...');
               int resulte = await _createBackup();
@@ -175,22 +171,22 @@ class _SettingpageState extends State<Settingpage> {
               }
             },
           ),
-          _ItemsSetting(
-            themeData: themeData,
-            title: 'حذف حساب افراد',
-            icon: Icons.delete_sweep_outlined,
-            onTop: () {
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => RemoveAccounts(),
-                  ));
-            },
-          ),
+          // _ItemsSetting(
+          //   themeData: themeData,
+          //   title: 'حذف حساب افراد',
+          //   iconurl: 'assets/images/svgs/remove_person.svg',
+          //   onTop: () {
+          //     Navigator.push(
+          //         context,
+          //         CupertinoPageRoute(
+          //           builder: (context) => RemoveAccounts(),
+          //         ));
+          //   },
+          // ),
           _ItemsSetting(
             themeData: themeData,
             title: 'درباره ما',
-            icon: Icons.account_box_rounded,
+            iconurl: 'assets/images/svgs/about.svg',
             onTop: () {
               aboutalert(context, themeData);
             },
@@ -198,7 +194,7 @@ class _SettingpageState extends State<Settingpage> {
           _ItemsSetting(
             themeData: themeData,
             title: 'حذف همه اطلاعات',
-            icon: Icons.folder_delete,
+            iconurl: 'assets/images/svgs/deleted_all.svg',
             onTop: () async {
               showDialog(
                 context: context,
@@ -206,6 +202,30 @@ class _SettingpageState extends State<Settingpage> {
                   return DeletedAllDialogSetting();
                 },
               );
+            },
+          ),
+          _ItemsSetting(
+            themeData: themeData,
+            title: 'امتیاز بده',
+            iconurl: 'assets/images/svgs/rank.svg',
+            onTop: () async {
+
+              // final String appId = "ir.rezadev.payment";
+              //
+              // final String url = "bazaar://details?id=$appId";
+              // if (await canLaunch(url)) {
+              //   await launch(url);
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              //     content: Directionality(
+              //         textDirection: TextDirection.rtl,
+              //         child: Text('کافه بازار روی گوشی شما وجود ندارد!')),
+              //   ));
+              //   throw 'Could not launch $url';
+              // }
+              final _bazaar = CafebazaarFlutter.instance;
+              await _bazaar.openCommentForm("ir.rezadev.payment");
+              print('USER BACK TO YOUR APP');
             },
           ),
         ]),
@@ -255,7 +275,7 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
+            color: themeData.colorScheme.primary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16), topRight: Radius.circular(16))),
         child: Center(child: Text('فرم تغییر نام'))),
@@ -270,7 +290,7 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: TextField(
             controller: controller,
-            maxLength: 8,
+            maxLength: 20,
             textAlign: TextAlign.right,
             decoration: InputDecoration(
                 counterText: "",
@@ -321,7 +341,7 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
     ],
     content: SizedBox(
       //width: 150,
-      height: 43,
+      height: 50,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
         child: Column(
@@ -330,8 +350,9 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
               height: 8,
             ),
             Container(
+              height: 32,
               decoration: BoxDecoration(
-                color: themeData.colorScheme.secondary.withOpacity(0.3),
+                color: themeData.colorScheme.secondary,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -362,15 +383,15 @@ dialogChangeName(BuildContext context, ThemeData themeData) {
 class _ItemsSetting extends StatelessWidget {
   final ThemeData themeData;
   final String title;
-  final IconData icon;
+  final String iconurl;
   final Function() onTop;
 
   const _ItemsSetting(
       {super.key,
       required this.themeData,
       required this.title,
-      required this.icon,
-      required this.onTop});
+      required this.onTop,
+      required this.iconurl});
 
   @override
   Widget build(BuildContext context) {
@@ -382,23 +403,27 @@ class _ItemsSetting extends StatelessWidget {
           width: 130,
           height: 180,
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              //border: Border.all(color: Colors.deepPurple,width: 2),
-              // boxShadow: [
-              //   BoxShadow(
-              //       color: Colors.deepPurple.withOpacity(0.2), blurRadius: 15)
-              // ]
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            //border: Border.all(color: Colors.deepPurple,width: 2),
+            // boxShadow: [
+            //   BoxShadow(
+            //       color: Colors.deepPurple.withOpacity(0.2), blurRadius: 15)
+            // ]
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 45,
-                color: Colors.deepPurple,
+              SvgPicture.asset(
+                iconurl,
+                width: 40,
               ),
+              // Icon(
+              //   icon,
+              //   size: 45,
+              //   color: themeData.colorScheme.primary,
+              // ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
                 child: FittedBox(
@@ -406,7 +431,7 @@ class _ItemsSetting extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: themeData.textTheme.headline3!.copyWith(
-                      color: Colors.deepPurple,
+                      color: themeData.colorScheme.onBackground,
                       fontSize: 14,
                     ),
                   ),
@@ -421,6 +446,22 @@ class _ItemsSetting extends StatelessWidget {
 }
 
 aboutalert(BuildContext context, ThemeData themeData) {
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
+// ···
+  final Uri emailLaunchUri = Uri(
+    scheme: 'mailto',
+    path: 'reza.najafi1871@gmail.com',
+    query: encodeQueryParameters(<String, String>{
+      'subject': 'دفتر حساب 1.0.1',
+    }),
+  );
+
   AlertDialog alert = AlertDialog(
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16))),
@@ -429,7 +470,7 @@ aboutalert(BuildContext context, ThemeData themeData) {
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
+            color: themeData.colorScheme.primary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16), topRight: Radius.circular(16))),
         child: Center(child: Text('درباره ما'))),
@@ -439,13 +480,36 @@ aboutalert(BuildContext context, ThemeData themeData) {
     contentPadding: const EdgeInsets.all(8),
     actions: [
       Center(
-          child: Text(
-        'اینجا یه متن مینویسم.\nReza.najafi1871@gmail.com',
-        textAlign: TextAlign.center,
+          child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Text(
+          'امید وارم از این اپلیکیشن لذت ببرید\nسعی می کنم مرتب آپدیت بزارم و بهترش کنم',
+          textAlign: TextAlign.center,
+          style: themeData.textTheme.subtitle1,
+        ),
       )),
       SizedBox(
-        height: 32,
+        height: 16,
       ),
+      TextButton(
+          onPressed: () async {
+            launchUrl(emailLaunchUri);
+          },
+          child: Container(
+              //height: 50,
+              //width: 150,
+              decoration: BoxDecoration(
+                  color: themeData.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ' تماس با ما',
+                  style: themeData.textTheme.headline3!
+                      .copyWith(fontSize: 20, color: Colors.white),
+                ),
+              )))),
       TextButton(
           onPressed: () async {
             Navigator.pop(context);
@@ -454,7 +518,7 @@ aboutalert(BuildContext context, ThemeData themeData) {
               //height: 50,
               //width: 150,
               decoration: BoxDecoration(
-                  color: themeData.primaryColor,
+                  color: themeData.colorScheme.onTertiary,
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
                   child: Padding(

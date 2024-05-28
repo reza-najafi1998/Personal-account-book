@@ -188,12 +188,7 @@ class Itemlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = Hive.box<Accounts>('Accounts');
-    String personName = box.values
-        .toList()
-        .firstWhere((element) => element.id == personid)
-        .name
-        .toString();
+    //final box = Hive.box<Accounts>('Accounts');
 
     DateTime notifydatetimemiladi = DateTime(
       int.parse(payloadNotify.substring(0, 4)),
@@ -219,13 +214,13 @@ class Itemlist extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                deletenotify(context, themeData, personid, titleNotify);
+                deletenotify(context, themeData, personid, titleNotify,notifydatetimemiladi,notifyTime);
               },
               child: Container(
                 width: 50,
                 //height:10,
                 decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 28, 4),
+                    color: themeData.colorScheme.error,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         bottomLeft: Radius.circular(20))),
@@ -257,10 +252,17 @@ class Itemlist extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        titleNotify,
-                        style: themeData.textTheme.subtitle1!
-                            .copyWith(fontSize: 15),
+                      SizedBox(
+                        width: 180
+                        ,child: Directionality(
+                        textDirection: TextDirection.rtl,
+                          child: Text(
+                            titleNotify,
+                            overflow: TextOverflow.ellipsis
+                            ,style: themeData.textTheme.subtitle1!
+                                .copyWith(fontSize: 15),
+                          ),
+                        ),
                       ),
                       Text(' : عنوان',
                           style: themeData.textTheme.subtitle1!.copyWith(
@@ -358,7 +360,7 @@ class Itemlist extends StatelessWidget {
   }
 
   deletenotify(
-      BuildContext context, ThemeData themeData, int id, String title) {
+      BuildContext context, ThemeData themeData, int id, String title,DateTime datetime,TimeOfDay timeof) {
     AlertDialog alert = AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16))),
@@ -367,7 +369,7 @@ class Itemlist extends StatelessWidget {
           width: double.infinity,
           height: 45,
           decoration: BoxDecoration(
-              color: Colors.deepPurpleAccent,
+              color: themeData.colorScheme.primary,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16))),
           child: Center(child: Text('حذف یاد آور'))),
@@ -383,30 +385,23 @@ class Itemlist extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  Icon(
-                    Icons.error,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Row(
-                    children: [
 
-                      Text(
-                        'یادآور : ',
-                        style: themeData.textTheme.headline3!
-                            .copyWith(fontSize: 15, color: Colors.black),
-                      ),
-                      Text(
-                        '$title',
-                        style: themeData.textTheme.headline3!
-                            .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  Text(
+                    'شما در حال حذف یادآور با مشخصات زیر هستید.',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black),
+                  ),
+                  Text(
+                    ' عنوان : $title',
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ' زمان : '+fixmonthdate(timeof.hour.toString())+':'+fixmonthdate(timeof.minute.toString())+'  '+datetime.toPersianDate(),
+                    style: themeData.textTheme.headline3!
+                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
                   ),
                 ],
               )),
@@ -427,7 +422,7 @@ class Itemlist extends StatelessWidget {
                 //height: 50,
                 //width: 150,
                 decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: themeData.colorScheme.error,
                     borderRadius: BorderRadius.circular(15)),
                 child: Center(
                     child: Padding(
