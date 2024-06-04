@@ -8,6 +8,7 @@ import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
 import 'package:payment/widgets/settlementListTransaction.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/editPersonNameDialogHome.dart';
 
@@ -78,6 +79,14 @@ class _ListTransactionState extends State<ListTransaction>
     // }
 
     return Future.value([activeTrx, archivTrx]);
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(launchUri);
   }
 
   ValueNotifier<List<Transactions>> activeTrx =
@@ -188,35 +197,76 @@ class _ListTransactionState extends State<ListTransaction>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              //margin: const EdgeInsets.all(8),
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: hesab.fullhesabperson(widget.id)>= 0
-                                      ? themeData.colorScheme.primaryContainer
-                                      : themeData.colorScheme.error,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: hesab.fullhesabperson(widget.id)>= 0
-                                    ? Image.asset('assets/images/png/up.png')
-                                    : Image.asset('assets/images/png/down.png'),
-                              ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    _makePhoneCall(
+                                      hesab.getphone(widget.id),
+                                    );
+                                  },
+                                  child: Container(
+                                    //margin: const EdgeInsets.all(8),
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: themeData.colorScheme.primary,
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Icon(
+                                          Icons.call,
+                                          color: Colors.white,
+                                        )),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Container(
+                                  //margin: const EdgeInsets.all(8),
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color:
+                                          hesab.fullhesabperson(widget.id) >= 0
+                                              ? themeData
+                                                  .colorScheme.primaryContainer
+                                              : themeData.colorScheme.error,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: hesab.fullhesabperson(widget.id) >= 0
+                                        ? Image.asset(
+                                            'assets/images/png/up.png')
+                                        : Image.asset(
+                                            'assets/images/png/down.png'),
+                                  ),
+                                ),
+                              ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
+
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      hesab.getname(widget.id),
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child: Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          hesab.getname(widget.id),
+                                          style: themeData.textTheme.subtitle1!
+                                              .copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 15),
+                                        ),
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 3,
@@ -257,6 +307,7 @@ class _ListTransactionState extends State<ListTransaction>
                                   'assets/images/png/user.png',
                                   width: 50,
                                 ),
+
                               ],
                             ),
                           ],
@@ -285,32 +336,24 @@ class _ListTransactionState extends State<ListTransaction>
                                   color: themeData.scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(8)),
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: themeData.scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(4, 8, 8, 7),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          CupertinoIcons.archivebox_fill,
-                                          color: Colors.black.withOpacity(0.6),
-                                          size: 17,
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          'تسویه حساب',
-                                          style: themeData.textTheme.subtitle1!
-                                              .copyWith(fontSize: 12),
-                                        ),
-                                      ],
+                                padding:
+                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.archivebox_fill,
+                                      color: Colors.black.withOpacity(0.6),
+                                      size: 17,
                                     ),
-                                  ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      'تسویه حساب',
+                                      style: themeData.textTheme.subtitle1!
+                                          .copyWith(fontSize: 12),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -319,40 +362,37 @@ class _ListTransactionState extends State<ListTransaction>
                           //   width: 6,
                           // ),
                           InkWell(
-                            onTap: ()  {
-                              Navigator.push(context, CupertinoPageRoute(builder: (context) => AddReminder(id: widget.id),));
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) =>
+                                        AddReminder(id: widget.id),
+                                  ));
                             },
                             child: Container(
                               decoration: BoxDecoration(
                                   color: themeData.scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(8)),
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: themeData.scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(4, 8, 8, 7),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.alarm,
-                                          color: Colors.black.withOpacity(0.6),
-                                          size: 17,
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          'یاد آور',
-                                          style: themeData.textTheme.subtitle1!
-                                              .copyWith(fontSize: 12),
-                                        ),
-                                      ],
+                                padding:
+                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.alarm,
+                                      color: Colors.black.withOpacity(0.6),
+                                      size: 17,
                                     ),
-                                  ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      'یاد آور',
+                                      style: themeData.textTheme.subtitle1!
+                                          .copyWith(fontSize: 12),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -363,54 +403,46 @@ class _ListTransactionState extends State<ListTransaction>
                           InkWell(
                             onTap: () async {
                               final boxacc = Hive.box<Accounts>('Accounts');
-                              Accounts acc=boxacc.values.toList().firstWhere((element) => element.id==widget.id);
-                              bool x=await showDialog(
+                              Accounts acc = boxacc.values.toList().firstWhere(
+                                  (element) => element.id == widget.id);
+                              bool x = await showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return EditPersonNameDialogHome(accitem:acc,);
+                                  return EditPersonNameDialogHome(
+                                    accitem: acc,
+                                  );
                                 },
                               );
 
                               print(x);
 
-                              if(x){
-                                setState(() {
-
-                                });
+                              if (x) {
+                                setState(() {});
                               }
-                              },
-
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                   color: themeData.scaffoldBackgroundColor,
                                   borderRadius: BorderRadius.circular(8)),
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: themeData.scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(4, 8, 8, 7),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.edit,
-                                          color: Colors.black.withOpacity(0.6),
-                                          size: 17,
-                                        ),
-                                        SizedBox(
-                                          width: 6,
-                                        ),
-                                        Text(
-                                          'ویرایش نام',
-                                          style: themeData.textTheme.subtitle1!
-                                              .copyWith(fontSize: 12),
-                                        ),
-                                      ],
+                                padding:
+                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: Colors.black.withOpacity(0.6),
+                                      size: 17,
                                     ),
-                                  ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      'ویرایش طرف حساب',
+                                      style: themeData.textTheme.subtitle1!
+                                          .copyWith(fontSize: 12),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -426,9 +458,8 @@ class _ListTransactionState extends State<ListTransaction>
                 Container(
                   height: 60,
                   decoration: BoxDecoration(
-                    color: themeData.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(16)
-                  ),
+                      color: themeData.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(16)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -480,11 +511,19 @@ class _ListTransactionState extends State<ListTransaction>
                         children: [
                           Text(
                             'لیست تراکنش ها',
-                            style: themeData.textTheme.subtitle1!
-                                .copyWith(fontWeight: FontWeight.w500, fontSize: 15,color: Colors.white),
+                            style: themeData.textTheme.subtitle1!.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: Colors.white),
                           ),
-                          SizedBox(width: 4,),
-                          Icon(Icons.list_alt_outlined,color: Colors.white,size: 28,)
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Icon(
+                            Icons.list_alt_outlined,
+                            color: Colors.white,
+                            size: 28,
+                          )
                         ],
                       ),
                     ],
@@ -492,7 +531,9 @@ class _ListTransactionState extends State<ListTransaction>
                 )
               ],
             ),
-            SizedBox(height: 8,),
+            SizedBox(
+              height: 8,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
@@ -837,25 +878,36 @@ class _ItemHesabList extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Column(
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(replaceFarsiNumber(trxitem.time),
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.black.withOpacity(0.5),
                                     fontSize: 10)),
-                            Text(replaceFarsiNumber(trxitem.date),
+                            Text(' : ساعت',
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.black.withOpacity(0.5),
                                     fontSize: 10)),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.access_time_outlined,
+                              size: 18,
+                            ),
                           ],
                         ),
-                        Column(
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(' : ساعت',
+                            Text(replaceFarsiNumber(trxitem.date),
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.black.withOpacity(0.5),
                                     fontSize: 10)),
@@ -863,23 +915,15 @@ class _ItemHesabList extends StatelessWidget {
                                 style: themeData.textTheme.headline3!.copyWith(
                                     color: Colors.black.withOpacity(0.5),
                                     fontSize: 10)),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.access_time_outlined,
-                              size: 18,
+                            SizedBox(
+                              width: 4,
                             ),
                             Icon(
                               Icons.date_range_outlined,
                               size: 18,
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   )
@@ -920,7 +964,7 @@ editTrxDialog(BuildContext context, Transactions trxitem, Function setrefresh) {
     titlePadding: EdgeInsets.all(0),
     title: Container(
         width: double.infinity,
-        //height: 45,
+        height: 45,
         decoration: BoxDecoration(
             color: themeData.colorScheme.primary,
             borderRadius: BorderRadius.only(
@@ -935,41 +979,41 @@ editTrxDialog(BuildContext context, Transactions trxitem, Function setrefresh) {
     content: SizedBox(
       // width: 150,
       height: 130,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-                color: themeData.colorScheme.secondary,
-                borderRadius: BorderRadius.circular(15)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text('توضیحات : ')),
-                  Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        '  ' + trxitem.description,
-                        style: TextStyle(fontSize: 13),
-                      )),
-                  SizedBox(
-                    height: 5,
-                  ),
-                ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: themeData.colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text('توضیحات : ')),
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          '  ' + trxitem.description,
+                          style: TextStyle(fontSize: 13),
+                        )),
+                    SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Expanded(
-            child: Row(
+            SizedBox(
+              height: 8,
+            ),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Flexible(
@@ -1049,9 +1093,9 @@ editTrxDialog(BuildContext context, Transactions trxitem, Function setrefresh) {
                   ),
                 )
               ],
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     ),
   );

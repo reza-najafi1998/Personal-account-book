@@ -219,6 +219,7 @@ class Register extends StatelessWidget {
                                 final acc = Accounts();
                                 acc.id = data['id'];
                                 acc.name = data['name'];
+                                acc.phone = data['phone'];
                                 await boxacc.add(acc);
                               }
 

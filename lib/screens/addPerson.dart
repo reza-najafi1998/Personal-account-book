@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:fast_contacts/fast_contacts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -13,6 +15,11 @@ import 'addTransaction.dart';
 import 'home.dart';
 
 class AddPerson extends StatefulWidget {
+  final String name;
+  final String phone;
+
+  const AddPerson({super.key, required this.name, required this.phone});
+
   @override
   State<AddPerson> createState() => _AddPersonState();
 }
@@ -20,12 +27,22 @@ class AddPerson extends StatefulWidget {
 class _AddPersonState extends State<AddPerson> {
   bool isswitch = true;
   final TextEditingController _nameTxt = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
   final TextEditingController _amountTxt = TextEditingController();
   final TextEditingController _infoTxt = TextEditingController();
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     _nameTxt.text=widget.name;
+     _phone.text = widget.phone;
+
+}
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+
 
     return Scaffold(
       body: SafeArea(
@@ -59,6 +76,27 @@ class _AddPersonState extends State<AddPerson> {
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.switch_account),
                         label: const Text('نام طرف حساب'),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    onTap: () {
+                      _nameTxt.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _nameTxt.text.length));
+                    },
+                    controller: _phone,
+                    maxLength: 12,
+                    //keyboardType: TextInputType.phone,
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.switch_account),
+                        label: const Text('شماره تلفن'),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20))),
                   ),
@@ -161,20 +199,32 @@ class _AddPersonState extends State<AddPerson> {
                     final accounts = Accounts();
                     final box = Hive.box<Accounts>('Accounts');
 
-                    bool isExists = false;
+                    bool isExistsname = false;
                     for (var data in box.values) {
                       if (data.name == _nameTxt.text) {
-                        isExists = true;
+                        isExistsname = true;
+                      }
+                    }
+                    bool isExistsphone = false;
+                    for (var data in box.values) {
+                      if (data.phone == _phone.text) {
+                        isExistsphone = true;
                       }
                     }
 
-                    if (isExists) {
+                    if (isExistsname) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Directionality(
                             textDirection: TextDirection.rtl,
                             child: Text('نام حساب تکراری است')),
                       ));
-                    } else {
+                    } else if (isExistsphone) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Text('شماره تلفن تکراری است')),
+                      ));
+                    } else{
                       showAlertDialog(context, 'لطفا صبر کنید');
 
                       var now = DateTime.now();
@@ -186,6 +236,7 @@ class _AddPersonState extends State<AddPerson> {
 
                       //accounts.id = box.values.length + 1;
                       accounts.name = _nameTxt.text;
+                      accounts.phone = _phone.text;
 
                       final Box<Accounts> boxacc = Hive.box('Accounts');
                       await boxacc.add(accounts);
@@ -205,6 +256,7 @@ class _AddPersonState extends State<AddPerson> {
                       await boxtrx.add(transactions);
 
 
+                      Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);
                       // Navigator.of(context).pushReplacement(CupertinoPageRoute(
