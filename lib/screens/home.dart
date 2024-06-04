@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/fl_chart.dart';
-import 'package:payment/screens/addPerson.dart';
 import 'package:payment/calculatorHesab.dart';
+import 'package:payment/screens/contacts.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
+import 'package:payment/services/sortedList.dart';
 import 'package:payment/widgets/deletedPersonDialogHome.dart';
 import 'package:payment/widgets/sortedDialogHome.dart';
-import 'package:payment/widgets/draverWidget.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// import 'package:shamsi_date/shamsi_date.dart';
 import 'dart:ui' as ui;
 
 import '../data/data.dart';
@@ -38,11 +37,7 @@ final value = NumberFormat("#,##0", "en_US");
 var now = new DateTime.now();
 var formatter = DateFormat('yyyy-MM-dd');
 Gregorian g = Gregorian(now.year, now.month, now.day);
-String jalaidate = now.toJalali().year.toString() +
-    '/' +
-    now.toJalali().month.toString() +
-    '/' +
-    now.toJalali().day.toString();
+String jalaidate = '${now.toJalali().year}/${now.toJalali().month}/${now.toJalali().day}';
 
 class _HomeState extends State<Home> {
   late SharedPreferences _prefs;
@@ -85,7 +80,7 @@ class _HomeState extends State<Home> {
         floatingActionButton: InkWell(
           onTap: () {
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return AddPerson();
+              return Contacts();
             }));
           },
           child: Container(
@@ -101,7 +96,7 @@ class _HomeState extends State<Home> {
                   'افزودن طرف حساب',
                   style: themeData.textTheme.subtitle2!.copyWith(fontSize: 15),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 const Icon(
@@ -115,7 +110,7 @@ class _HomeState extends State<Home> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(
@@ -170,10 +165,6 @@ class _HomeState extends State<Home> {
                                         size: 25,
                                         color: themeData.colorScheme.onPrimary,
                                       ))
-                                  // Image.asset(
-                                  //   'assets/images/png/calender.png',
-                                  //   scale: 7,
-                                  // ),
                                 ],
                               ),
                               ValueListenableBuilder(
@@ -186,7 +177,7 @@ class _HomeState extends State<Home> {
                                           ,child: Directionality(
                                             textDirection: ui.TextDirection.rtl,
                                             child: Text(
-
+                                                  'سلام '+
                                                   boxdatauser.values
                                                       .toList()[0]
                                                       .name,
@@ -208,10 +199,6 @@ class _HomeState extends State<Home> {
                                           color:
                                               themeData.colorScheme.onTertiary,
                                         )
-                                        // Image.asset(
-                                        //   'assets/images/png/user.png',
-                                        //   scale: 7,
-                                        // ),
                                       ],
                                     );
                                   }),
@@ -371,12 +358,6 @@ class _HomeState extends State<Home> {
                                         bedehi: hesab.bedehi().toDouble(),
                                         themeData: themeData,
                                       ))
-
-                                  // Image.asset(
-                                  //   'assets/images/png/chart.png',
-                                  //   scale: 3,
-                                  // ),
-                                  //Image.asset('assets/images/png/arrow.png')
                                 ],
                               );
                             },
@@ -419,11 +400,6 @@ class _HomeState extends State<Home> {
                                 Icons.person_search,
                                 size: 35,
                               )
-
-                              // Image.asset(
-                              //   'assets/images/png/search.png',
-                              //   scale: 10,
-                              // )
                               ),
                         ),
                       ),
@@ -574,38 +550,9 @@ class _ListBuilderAccounts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Accounts> datas = boxacc.values
-        .where((element) => element.name.contains(_controller.text))
+        .where((element) => element.name.toLowerCase().contains(_controller.text.toLowerCase()))
         .toList();
 
-    int customCompare(String a, String b) {
-      // اولویت رشته‌های فارسی
-      if (a.contains(RegExp(r'[\u0600-\u06FF]')) &&
-          !b.contains(RegExp(r'[\u0600-\u06FF]'))) {
-        return -1;
-      } else if (!a.contains(RegExp(r'[\u0600-\u06FF]')) &&
-          b.contains(RegExp(r'[\u0600-\u06FF]'))) {
-        return 1;
-      }
-
-      // اولویت رشته‌های لاتین
-      if (a.contains(RegExp(r'[a-zA-Z]')) && !b.contains(RegExp(r'[a-zA-Z]'))) {
-        return -1;
-      } else if (!a.contains(RegExp(r'[a-zA-Z]')) &&
-          b.contains(RegExp(r'[a-zA-Z]'))) {
-        return 1;
-      }
-
-      // اولویت اعداد
-      if (a.contains(RegExp(r'[0-9]')) && !b.contains(RegExp(r'[0-9]'))) {
-        return -1;
-      } else if (!a.contains(RegExp(r'[0-9]')) &&
-          b.contains(RegExp(r'[0-9]'))) {
-        return 1;
-      }
-
-      // در صورتی که هیچ یک از شرایط بالا برقرار نبود، از مقایسه معمولی استفاده می‌کنیم
-      return a.compareTo(b);
-    }
 
     datas.sort((a, b) => customCompare(a.name, b.name));
 
@@ -680,9 +627,6 @@ class _ItemHesabListState extends State<_ItemHesabList> {
             });
           }
         },
-        // {
-        //   settingaccount(context, widget.themeData, widget.accitem);
-        // },
         onTap: () {
           Navigator.push(context, CupertinoPageRoute(builder: (context) {
             return ListTransaction(

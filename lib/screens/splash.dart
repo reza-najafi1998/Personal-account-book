@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
           textDirection: TextDirection.rtl,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('دفتر حساب 1.0.1', style: theme.textTheme.subtitle1),
+            child: Text('دفتر حساب 1.0.0', style: theme.textTheme.subtitle1),
           ),
         ),
       ],

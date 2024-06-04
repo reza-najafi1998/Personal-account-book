@@ -18,12 +18,19 @@ class CalculatorHesab {
 
   String getname(int id) {
     String name='';
-    List<Accounts> acc_names = [];
     for (var data in acc.values.where((element) => element.id==id)
           .toList()) {
       name=data.name;
     }
     return name;
+  }
+  String getphone(int id) {
+    String phone='';
+    for (var data in acc.values.where((element) => element.id==id)
+          .toList()) {
+      phone=data.phone;
+    }
+    return phone;
   }
 
   int bedehi() {

@@ -1,5 +1,5 @@
 import 'package:hive_flutter/adapters.dart';
-part 'data.g.dart';
+ part 'data.g.dart';
 
 @HiveType(typeId: 0)
 class DataUser extends HiveObject {
@@ -15,6 +15,8 @@ class Accounts extends HiveObject {
   int id = 0;
   @HiveField(1)
   String name = '';
+  @HiveField(2)
+  String phone = '';
 
   static int _nextId = 1;
 
