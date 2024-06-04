@@ -77,12 +77,18 @@ class _ContactsState extends State<Contacts> {
       }
 
       if (_contacts.isEmpty) {
-        Navigator.pushReplacement(
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          Navigator.pushReplacement(
             context,
-            CupertinoPageRoute(
-              builder: (context) =>
-                  const AddPerson(name: '', phone: ''),
-            ));
+            CupertinoPageRoute(builder: (context) => AddPerson(fromContactPage: true, name: '',phone: '',)),
+          );
+        });
+        // Navigator.pushReplacement(
+        //     context,
+        //     CupertinoPageRoute(
+        //       builder: (context) =>
+        //           const AddPerson(name: '', phone: ''),
+        //     ));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Directionality(
               textDirection: TextDirection.rtl,
@@ -112,7 +118,7 @@ class _ContactsState extends State<Contacts> {
       floatingActionButton: InkWell(
         onTap: () {
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-            return const AddPerson(name: '', phone: '');
+            return const AddPerson(name: '', phone: '',fromContactPage: false,);
           }));
         },
         child: Container(
@@ -278,7 +284,8 @@ class _ContactlistState extends State<Contactlist> {
                             builder: (context) {
                               return AddPerson(
                                   name: datas[index].displayName,
-                                  phone: datas[index].phones[0].number);
+                                  phone: datas[index].phones[0].number,
+                              fromContactPage: false,);
                             },
                           ));
                         },

@@ -17,8 +17,10 @@ import 'home.dart';
 class AddPerson extends StatefulWidget {
   final String name;
   final String phone;
+  final bool fromContactPage;
 
-  const AddPerson({super.key, required this.name, required this.phone});
+
+  const AddPerson({super.key, required this.name, required this.phone, required this.fromContactPage});
 
   @override
   State<AddPerson> createState() => _AddPersonState();
@@ -207,7 +209,7 @@ class _AddPersonState extends State<AddPerson> {
                     }
                     bool isExistsphone = false;
                     for (var data in box.values) {
-                      if (data.phone == _phone.text) {
+                      if (data.phone == _phone.text && data.phone!='') {
                         isExistsphone = true;
                       }
                     }
@@ -236,7 +238,7 @@ class _AddPersonState extends State<AddPerson> {
 
                       //accounts.id = box.values.length + 1;
                       accounts.name = _nameTxt.text;
-                      accounts.phone = _phone.text;
+                      accounts.phone = _phone.text.isNotEmpty?_phone.text:'';
 
                       final Box<Accounts> boxacc = Hive.box('Accounts');
                       await boxacc.add(accounts);
@@ -255,10 +257,15 @@ class _AddPersonState extends State<AddPerson> {
                       final Box<Transactions> boxtrx = Hive.box('transactions');
                       await boxtrx.add(transactions);
 
+                      if (widget.fromContactPage) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
 
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
                       // Navigator.of(context).pushReplacement(CupertinoPageRoute(
                       //   builder: (context) => Home(),
                       // ));
