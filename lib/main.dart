@@ -17,6 +17,13 @@ const userBoxTransactions = 'Transactions';
 const userBoxAccounts = 'Accounts';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
+
   //---notify setting
   WidgetsFlutterBinding.ensureInitialized();
   NotificationService().initNotification();
@@ -33,6 +40,7 @@ void main() async {
   await Hive.openBox<DataUser>(userBoxName);
   await Hive.openBox<Transactions>(userBoxTransactions);
   await Hive.openBox<Accounts>(userBoxAccounts);
+
   runApp(const MyApp());
 }
 

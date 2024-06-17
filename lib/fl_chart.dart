@@ -53,8 +53,8 @@ class MyPieChart extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 //color: talab>bedehi?const Color(0xff00f53f):const Color(0xfff82442),
               ),child: talab>bedehi*(-1)?
-            Image.asset('assets/images/png/up.png',color: Colors.grey,scale: 1.5,):
-            Image.asset('assets/images/png/down.png',color: Colors.grey,scale: 1.5,),
+            Image.asset('assets/images/png/up.png',color: Colors.white,scale: 1.5,):
+            Image.asset('assets/images/png/down.png',color: Colors.white,scale: 1.5,),
             ),)
           // Center(
           //   child: InkWell(

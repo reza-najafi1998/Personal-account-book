@@ -4,18 +4,23 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:payment/fl_chart.dart';
 import 'package:payment/calculatorHesab.dart';
-import 'package:payment/screens/contacts.dart';
+import 'package:payment/screens/addPerson.dart';
+import 'package:payment/screens/contacts-deactive.dart';
 import 'package:payment/screens/listTransaction.dart';
 import 'package:intl/intl.dart';
 import 'package:payment/services/sortedList.dart';
+import 'package:payment/widgets/coachmarkDesc.dart';
 import 'package:payment/widgets/deletedPersonDialogHome.dart';
+import 'package:payment/widgets/headerHomePage.dart';
 import 'package:payment/widgets/sortedDialogHome.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import 'dart:ui' as ui;
 
 import '../data/data.dart';
+import '../widgets/headerHomePage.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -30,44 +35,247 @@ final ValueNotifier<String> searchKeywordNotifier = ValueNotifier('');
 final boxtrx = Hive.box<Transactions>('Transactions');
 final boxacc = Hive.box<Accounts>('Accounts');
 final boxdatauser = Hive.box<DataUser>('User');
+
+//get name
 final datauserdata = boxdatauser.values.toList()[0];
-CalculatorHesab hesab = CalculatorHesab(boxacc, boxtrx);
 String name = '';
+
+CalculatorHesab hesab = CalculatorHesab(boxacc, boxtrx);
+
 final value = NumberFormat("#,##0", "en_US");
 var now = new DateTime.now();
 var formatter = DateFormat('yyyy-MM-dd');
 Gregorian g = Gregorian(now.year, now.month, now.day);
-String jalaidate = '${now.toJalali().year}/${now.toJalali().month}/${now.toJalali().day}';
+String jalaidate =
+    '${now.toJalali().year}/${now.toJalali().month}/${now.toJalali().day}';
 
 class _HomeState extends State<Home> {
   late SharedPreferences _prefs;
 
   bool _SortedAccording = true;
   bool _SortedAs = false;
+  bool _Coach = true;
 
+  //save sorting siting
   void _saveSortedSettings(bool SortedAccording, bool SortedAs) {
     _prefs.setBool('SortedAccording', SortedAccording);
     _prefs.setBool('SortedAs', SortedAs);
     // ...
   }
 
-  // تابع برای بارگیری تنظیمات
-  void _loadSettings() async {
+  // get setting
+  Future _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       _SortedAccording = _prefs.getBool('SortedAccording') ?? true;
       _SortedAs = _prefs.getBool('SortedAs') ?? false;
+      _Coach = _prefs.getBool('CoachHome') ?? true;
+      if(_Coach==true){
+        inserttestdata();
+      }
     });
   }
 
+  //coach
+  TutorialCoachMark? tutorialCoachMark;
+  List<TargetFocus> targets = [];
+
+  GlobalKey headerkey = GlobalKey();
+  GlobalKey listpersonkey = GlobalKey();
+  GlobalKey sortedkey = GlobalKey();
+  GlobalKey searchkey = GlobalKey();
+  GlobalKey addpersonkey = GlobalKey();
+  GlobalKey itempersonkey = GlobalKey();
+
+  void _showTutorialCoachmark() {
+    initTarget();
+    tutorialCoachMark = TutorialCoachMark(
+      targets: targets,
+      pulseEnable: false,
+      hideSkip: true,
+    )..show(context: context);
+  }
+
+  void initTarget() {
+    targets = [
+      TargetFocus(
+          identify: "header-key",
+          keyTarget: headerkey,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text:
+                  'به کمک نمودار بصورت کلی جمع میزان بستانکاری و بدهکاری شما نمایش داده می شود.',
+                  onSkip: () {controller.skip();_prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                  },
+                );
+              },
+            )
+          ]),
+      TargetFocus(
+          identify: "listperson-key",
+          keyTarget: listpersonkey,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              align: ContentAlign.top,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text:
+                  'لیستی از طرف حساب های شما به همراه جمع مبلغ حساب نمایش داده می شود، برای مشاهده گزارش تراکنش ها و افزودن تراکنش باید روی مخاطب لمس کنید.',
+                  onSkip: () {controller.skip();_prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                  },
+
+                );
+              },
+            )
+          ]),
+      TargetFocus(
+          identify: "sorded-key",
+          keyTarget: sortedkey,
+          shape: ShapeLightFocus.Circle,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text: 'برای مرتب سازی لیست طرف حساب اینجا را لمس کنید.',
+                  onSkip: () {controller.skip();_prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                  },
+
+                );
+              },
+            )
+          ]),
+      TargetFocus(
+          identify: "search-key",
+          keyTarget: searchkey,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text:
+                  'برای پیدا کردن طرف حساب در لیست کافیه اسم طرف حساب را اینجا وارد کنید',
+                  onSkip: () {controller.skip();_prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                  },
+
+                );
+              },
+            )
+          ]),
+      TargetFocus(
+          identify: "itemperson-key",
+          keyTarget: itempersonkey,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              align: ContentAlign.top,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text: 'برای حذف طرف حساب روی نام طرف لمس کنید و نگهدارید.',
+                  onSkip: () {controller.skip();_prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                  },
+
+                );
+              },
+            )
+          ]),
+      TargetFocus(
+          identify: "addperson-key",
+          keyTarget: addpersonkey,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              align: ContentAlign.top,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text: 'برای ایجاد طرف حساب جدید از این بخش استفاده کنید',
+                  next: 'تمام',
+                  onSkip: () {controller.skip();
+                  _prefs.setBool('CoachHome', false);},
+                  onNext: () {
+                    controller.next();
+                     _prefs.setBool('CoachHome', false);
+                  },
+
+                );
+              },
+            )
+          ]),
+
+    ];
+  }
+//
+
+  Future inserttestdata()async{
+    if(_Coach&&boxacc.values.length==0){
+
+      Accounts test=Accounts();
+      test.id=0;
+      test.name='طرف حساب آموزشی';
+      test.phone='0912345679';
+      final Box<Accounts> boxacc = Hive.box('Accounts');
+      await boxacc.add(test);
+
+      Transactions trxtest=Transactions();
+      trxtest.id=0;
+      trxtest.status=true;
+      trxtest.time='21:25:54';
+      trxtest.price=1256000;
+      trxtest.date='1403/03/20';
+      trxtest.description='جهت آموزش برنامه';
+      final Box<Transactions> boxtrx = Hive.box('Transactions');
+
+      await boxtrx.add(trxtest);
+
+      Transactions trxtest2=Transactions();
+
+      trxtest2.id=0;
+      trxtest2.status=false;
+      trxtest2.time='21:28:54';
+      trxtest2.price=356000;
+      trxtest2.date='1403/03/20';
+      trxtest2.description='جهت آموزش برنامه';
+      await boxtrx.add(trxtest2);
+
+    }
+  }
   @override
   void initState() {
+    Future.delayed(
+      Duration(seconds: 1),
+          () async{
+        if(_Coach){
+          _showTutorialCoachmark();
+        }
+      },
+    );
+
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    _loadSettings();
+     _loadSettings();
+
+
 
     final themeData = Theme.of(context);
     setState(() {
@@ -75,12 +283,12 @@ class _HomeState extends State<Home> {
     });
 
     return Scaffold(
-        //endDrawer: MyDrawer(nameUser: boxdatauser.values.toList()[0].name,),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: InkWell(
+          key: addpersonkey,
           onTap: () {
             Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-              return Contacts();
+                return AddPerson(name: '', phone: '');
             }));
           },
           child: Container(
@@ -118,256 +326,11 @@ class _HomeState extends State<Home> {
                   width: MediaQuery.of(context).size.width,
                   // width: ,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Container(
-                    width: double.infinity,
-                    height: 220,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                        weekdayjalali(),
-                                        style: themeData.textTheme.subtitle1!
-                                            .copyWith(fontSize: 12),
-                                      ),
-                                      Text(
-                                        replaceFarsiNumber(jalaidate),
-                                        style: themeData.textTheme.headline3,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          color:
-                                              themeData.colorScheme.onTertiary),
-                                      child: Icon(
-                                        Icons.calendar_month_outlined,
-                                        size: 25,
-                                        color: themeData.colorScheme.onPrimary,
-                                      ))
-                                ],
-                              ),
-                              ValueListenableBuilder(
-                                  valueListenable: boxdatauser.listenable(),
-                                  builder: (context, valuee, child) {
-                                    return Row(
-                                      children: [
-                                        Container(
-                                          width: 200
-                                          ,child: Directionality(
-                                            textDirection: ui.TextDirection.rtl,
-                                            child: Text(
-                                                  'سلام '+
-                                                  boxdatauser.values
-                                                      .toList()[0]
-                                                      .name,
-                                              style: themeData
-                                                  .textTheme.subtitle1!
-                                                  .copyWith(
-                                                      color: themeData.colorScheme
-                                                          .onTertiary),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        Icon(
-                                          Icons.account_circle_rounded,
-                                          size: 35,
-                                          color:
-                                              themeData.colorScheme.onTertiary,
-                                        )
-                                      ],
-                                    );
-                                  }),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          ValueListenableBuilder(
-                            valueListenable: boxtrx.listenable(),
-                            builder: (context, valuee, child) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                'بستانکاری',
-                                                style: themeData
-                                                    .textTheme.subtitle1!
-                                                    .copyWith(fontSize: 12),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text('تومان',
-                                                      style: themeData
-                                                          .textTheme.headline3),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                    child: FittedBox(
-                                                      child: Directionality(
-                                                        textDirection:ui.TextDirection.rtl ,
-                                                        child: Text(
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          replaceFarsiNumber(
-                                                              value.format(
-                                                                  hesab.talab())),
-                                                          style: themeData
-                                                              .textTheme
-                                                              .subtitle2!
-                                                              .copyWith(
-                                                                  height: 1,
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .black),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Container(
-                                            width: 40,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              color: themeData
-                                                  .colorScheme.primaryContainer,
-                                            ),
-                                            child: Image.asset(
-                                              'assets/images/png/up.png',
-                                              scale: 3,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                'بدهکاری',
-                                                style: themeData
-                                                    .textTheme.subtitle1!
-                                                    .copyWith(fontSize: 12),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text('تومان',
-                                                      style: themeData
-                                                          .textTheme.headline3),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Text(
-                                                    replaceFarsiNumber(
-                                                        value.format(
-                                                            hesab.bedehi())),
-                                                    style: themeData
-                                                        .textTheme.subtitle2!
-                                                        .copyWith(
-                                                            height: 1,
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Container(
-                                            width: 40,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              color:
-                                                  themeData.colorScheme.error,
-                                            ),
-                                            child: Image.asset(
-                                              'assets/images/png/down.png',
-                                              scale: 3,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                      width: 110,
-                                      height: 110,
-                                      child: MyPieChart(
-                                        talab: hesab.talab().toDouble(),
-                                        bedehi: hesab.bedehi().toDouble(),
-                                        themeData: themeData,
-                                      ))
-                                ],
-                              );
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                HeaderHomePage(
+                  headerkey: headerkey,
                 ),
                 Padding(
+                  key: searchkey,
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
                   child: Container(
                     width: double.infinity,
@@ -399,8 +362,7 @@ class _HomeState extends State<Home> {
                               prefixIcon: Icon(
                                 Icons.person_search,
                                 size: 35,
-                              )
-                              ),
+                              )),
                         ),
                       ),
                     ),
@@ -417,6 +379,7 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
                     child: Container(
+                      key: listpersonkey,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15),
@@ -431,6 +394,7 @@ class _HomeState extends State<Home> {
                                 Row(
                                   children: [
                                     InkWell(
+                                        key: sortedkey,
                                         onTap: () async {
                                           SelectedValues? selectedValues =
                                               await showDialog<SelectedValues>(
@@ -485,7 +449,7 @@ class _HomeState extends State<Home> {
                                       boxacc: boxacc,
                                       themeData: themeData,
                                       hesab: hesab,
-                                      sortedAs: _SortedAs,
+                                      sortedAs: _SortedAs, itemkey: itempersonkey,
                                     )
                                   : Column(
                                       children: [
@@ -538,7 +502,7 @@ class _ListBuilderAccounts extends StatelessWidget {
     required this.boxtrx,
     required this.boxacc,
     required this.hesab,
-    required this.sortedAs,
+    required this.sortedAs, required this.itemkey,
   });
 
   final Box<Transactions> boxtrx;
@@ -546,13 +510,14 @@ class _ListBuilderAccounts extends StatelessWidget {
   final ThemeData themeData;
   final CalculatorHesab hesab;
   final bool sortedAs;
+  final GlobalKey itemkey;
 
   @override
   Widget build(BuildContext context) {
     final List<Accounts> datas = boxacc.values
-        .where((element) => element.name.toLowerCase().contains(_controller.text.toLowerCase()))
+        .where((element) =>
+            element.name.toLowerCase().contains(_controller.text.toLowerCase()))
         .toList();
-
 
     datas.sort((a, b) => customCompare(a.name, b.name));
 
@@ -568,13 +533,14 @@ class _ListBuilderAccounts extends StatelessWidget {
         // print(data.id.toString()+' '+data.name.toString());
 
         return _ItemHesabList(
+          itemkey: itemkey,
           themeData: themeData,
           id: data.id,
           name: data.name,
           price: tempprice.toString(),
           state: tempprice >= 0 ? true : false,
           date: hesab.lastdatetrx(data.id),
-          accitem: data,
+          accitem: data, index: index,
         );
       },
     );
@@ -583,12 +549,14 @@ class _ListBuilderAccounts extends StatelessWidget {
 
 class _ItemHesabList extends StatefulWidget {
   final int id;
+  final int index;
   final String name;
   final String price;
   final bool state;
   final String date;
   final ThemeData themeData;
   final Accounts accitem;
+  final GlobalKey itemkey;
 
   const _ItemHesabList({
     required this.themeData,
@@ -597,7 +565,7 @@ class _ItemHesabList extends StatefulWidget {
     required this.state,
     required this.id,
     required this.date,
-    required this.accitem,
+    required this.accitem, required this.itemkey, required this.index,
   });
 
   @override
@@ -609,21 +577,23 @@ class _ItemHesabListState extends State<_ItemHesabList> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     return Padding(
+      key:widget.index==0?widget.itemkey:null,
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
       child: InkWell(
         onLongPress: () async {
-          bool x=await showDialog(
+          bool x = await showDialog(
             context: context,
             builder: (BuildContext context) {
               return DeletedPersonDialogHome(
-                name: widget.name, accitem: widget.accitem,
+                name: widget.name,
+                accitem: widget.accitem,
               );
             },
           );
 
-          if(x){
+          if (x) {
             setState(() {
-
+              x=false;
             });
           }
         },
@@ -635,50 +605,52 @@ class _ItemHesabListState extends State<_ItemHesabList> {
           })).then((value) => setState(() {
                 hesab = CalculatorHesab(boxacc, boxtrx);
                 FocusManager.instance.primaryFocus?.unfocus();
-          }));
+              }));
         },
         child: Container(
           width: double.infinity,
-          height: 70,
+          height: 65,
           decoration: BoxDecoration(
             color: widget.themeData.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Flex(
+            direction: Axis.horizontal,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: widget.state
-                            ? themeData.colorScheme.primaryContainer
-                            : themeData.colorScheme.error,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: widget.state
-                          ? Image.asset(
-                              'assets/images/png/up.png',
-                              scale: 3,
-                            )
-                          : Image.asset(
-                              'assets/images/png/down.png',
-                              scale: 3,
-                            ),
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Column(
+              Container(
+                margin: const EdgeInsets.all(8),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: widget.state
+                        ? themeData.colorScheme.primaryContainer
+                        : themeData.colorScheme.error,
+                    borderRadius: BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: widget.state
+                      ? Image.asset(
+                          'assets/images/png/up.png',
+                          scale: 3,
+                        )
+                      : Image.asset(
+                          'assets/images/png/down.png',
+                          scale: 3,
+                        ),
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Flex(
+                  direction: Axis.horizontal,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: 230,
@@ -693,49 +665,48 @@ class _ItemHesabListState extends State<_ItemHesabList> {
                                           fontWeight: FontWeight.bold)),
                             ),
                           ),
-                           Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-
-                              children: [
-                                Text(
-                                  'تومان',
-                                  style: widget.themeData.textTheme.headline3!.copyWith(
-                                      color: Colors.black,
-                                      height: 0.4,
-                                      fontWeight: FontWeight.w100,
-                                      fontSize: 13),
-                                ),
-                                SizedBox(width: 8,),
-                                Text(
-                                    overflow: TextOverflow.ellipsis,
-                                    replaceFarsiNumber(
-                                        value.format(int.parse(widget.price))),
-                                    style: widget.themeData.textTheme.headline3!
-                                        .copyWith(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                    )),
-
-                              ],
-                            ),
-
-
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'تومان',
+                                style: widget.themeData.textTheme.headline3!
+                                    .copyWith(
+                                        color: Colors.black,
+                                        height: 0.4,
+                                        fontWeight: FontWeight.w100,
+                                        fontSize: 13),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  replaceFarsiNumber(
+                                      value.format(int.parse(widget.price))),
+                                  style: widget.themeData.textTheme.headline3!
+                                      .copyWith(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                  )),
+                            ],
+                          ),
                         ],
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Image.asset(
-                        'assets/images/png/user.png',
-                        width: 45,
-                      ),
-                      const SizedBox(
-                        width: 6,
-                      )
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Image.asset(
+                      'assets/images/png/user.png',
+                      width: 45,
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -804,11 +775,10 @@ settingaccount(BuildContext context, ThemeData themeData, Accounts accitem) {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           child: TextField(
-              onTap: () {
-                controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: controller.text.length));
-              },
-
+            onTap: () {
+              controller.selection = TextSelection.fromPosition(
+                  TextPosition(offset: controller.text.length));
+            },
             controller: controller,
             maxLength: 30,
             textAlign: TextAlign.right,
@@ -866,52 +836,3 @@ settingaccount(BuildContext context, ThemeData themeData, Accounts accitem) {
     },
   );
 }
-
-sorteddialog(BuildContext context, ThemeData themeData) {
-  AlertDialog alert = AlertDialog(
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16))),
-    titlePadding: EdgeInsets.all(0),
-    title: Container(
-        width: double.infinity,
-        height: 45,
-        decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-        child: Center(child: Text('مرتب سازی لیست حساب'))),
-    //actionsAlignment: MainAxisAlignment.start,
-    titleTextStyle: themeData.textTheme.headline3!
-        .copyWith(color: Colors.white, fontSize: 18),
-    contentPadding: const EdgeInsets.all(8),
-    actions: [
-      TextButton(
-          onPressed: () async {},
-          child: Container(
-              //height: 50,
-              //width: 150,
-              decoration: BoxDecoration(
-                  color: themeData.primaryColor,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Center(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'ثبت',
-                  style: themeData.textTheme.headline3!
-                      .copyWith(fontSize: 20, color: Colors.white),
-                ),
-              ))))
-    ],
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
-
-// تابع برای ذخیره تنظیمات

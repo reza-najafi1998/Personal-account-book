@@ -4,17 +4,24 @@ class SelectedValues {
   bool selectedAccordingValue;
   bool selectedAsValue;
 
-  SelectedValues({required this.selectedAccordingValue, required this.selectedAsValue});
+  SelectedValues(
+      {required this.selectedAccordingValue, required this.selectedAsValue});
 }
 
 class SortedDialogHome extends StatefulWidget {
   final bool selectedAccordingValue;
   final bool selectedAsValue;
 
-  const SortedDialogHome({Key? key, required this.selectedAccordingValue, required this.selectedAsValue}) : super(key: key);
+  const SortedDialogHome(
+      {Key? key,
+      required this.selectedAccordingValue,
+      required this.selectedAsValue})
+      : super(key: key);
 
   @override
-  _SortedDialogHomeState createState() => _SortedDialogHomeState(SelectedValues(selectedAccordingValue: selectedAccordingValue, selectedAsValue: selectedAsValue));
+  _SortedDialogHomeState createState() => _SortedDialogHomeState(SelectedValues(
+      selectedAccordingValue: selectedAccordingValue,
+      selectedAsValue: selectedAsValue));
 }
 
 class _SortedDialogHomeState extends State<SortedDialogHome> {
@@ -26,18 +33,21 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16))),
       titlePadding: EdgeInsets.all(0),
       title: Container(
         width: double.infinity,
         height: 45,
         decoration: BoxDecoration(
           color: themeData.colorScheme.primary,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         ),
         child: Center(child: Text('مرتب سازی لیست')),
       ),
-      titleTextStyle: themeData.textTheme.headline3!.copyWith(color: Colors.white, fontSize: 18),
+      titleTextStyle: themeData.textTheme.headline3!
+          .copyWith(color: Colors.white, fontSize: 18),
       contentPadding: const EdgeInsets.all(8),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -46,10 +56,12 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-
-              Text('مبلغ',style: TextStyle(color: Colors.grey),),
+              Text(
+                'مبلغ',
+                style: TextStyle(color: Colors.grey),
+              ),
               Radio(
-               // activeColor: Colors.deepPurple,
+                // activeColor: Colors.deepPurple,
                 value: true,
                 groupValue: selectedValues.selectedAccordingValue,
                 onChanged: (value) {
@@ -69,37 +81,67 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
                   });
                 },
               ),
-              Directionality(textDirection: TextDirection.rtl, child: Text(' بر اساس : ')),
+              Directionality(
+                  textDirection: TextDirection.rtl, child: Text(' بر اساس : ')),
             ],
           ),
           Divider(),
-          Row(
+          Flex(
+            direction: Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('صعودی'),
-              Radio(
-                activeColor: themeData.colorScheme.primaryContainer,
-                value: false,
-                groupValue: selectedValues.selectedAsValue,
-                onChanged: (value) {
-                  setState(() {
-                    selectedValues.selectedAsValue = false;
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('صعودی'),
+                    SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Radio(
+                        activeColor: themeData.colorScheme.primaryContainer,
+                        value: false,
+                        groupValue: selectedValues.selectedAsValue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValues.selectedAsValue = false;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Text('نزولی'),
-              Radio(
-                activeColor: themeData.colorScheme.primaryContainer,
-                value: true,
-                groupValue: selectedValues.selectedAsValue,
-                onChanged: (value) {
-                  setState(() {
-                    selectedValues.selectedAsValue = true;
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('نزولی'),
+                    SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Radio(
+                        activeColor: themeData.colorScheme.primaryContainer,
+                        value: true,
+                        groupValue: selectedValues.selectedAsValue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedValues.selectedAsValue = true;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Directionality(textDirection: TextDirection.rtl, child: Text('به صورت : ')),
+              Expanded(
+                  flex: 1,
+                  child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Text('به صورت : '))),
             ],
           ),
         ],
@@ -129,7 +171,8 @@ class _SortedDialogHomeState extends State<SortedDialogHome> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'ثبت',
-                        style: themeData.textTheme.headline3!.copyWith(fontSize: 20, color: Colors.white),
+                        style: themeData.textTheme.headline3!
+                            .copyWith(fontSize: 20, color: Colors.white),
                       ),
                     ),
                   ),

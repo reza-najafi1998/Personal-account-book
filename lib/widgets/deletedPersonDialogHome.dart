@@ -16,6 +16,7 @@ class DeletedPersonDialogHome extends StatelessWidget {
   final boxdatauser = Hive.box<DataUser>('User');
   @override
   Widget build(BuildContext context) {
+
     final ThemeData themeData = Theme.of(context);
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -63,7 +64,8 @@ class DeletedPersonDialogHome extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: Row(
+              child: Flex(
+                direction: Axis.horizontal,
                 children: [
                   Icon(
                     Icons.error,
@@ -72,16 +74,20 @@ class DeletedPersonDialogHome extends StatelessWidget {
                   SizedBox(
                     width: 8,
                   ),
-                  Text(
-                    'با حذف حساب تمام تراکنش ها حذف و\nغیر قابل بازگردانی خواهد شد.',
-                    style: themeData.textTheme.headline3!
-                        .copyWith(fontSize: 15, color: Colors.black),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      'با حذف حساب تمام تراکنش ها حذف و غیر قابل بازگردانی خواهد شد.',
+                      style: themeData.textTheme.headline3!
+                          .copyWith(fontSize: 15, color: Colors.black),
+                    ),
                   ),
                 ],
               )),
         ),
         TextButton(
             onPressed: () async {
+
               for (var data in boxtrx.values) {
                 if (data.id == accitem.id) {
                   await data.delete();
@@ -94,7 +100,7 @@ class DeletedPersonDialogHome extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     child: Text('حساب با موفقیت حذف شد')),
               ));
-              Navigator.pop(context);
+              Navigator.pop(context,true);
             },
             child: Container(
               //height: 50,

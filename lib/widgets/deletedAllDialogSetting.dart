@@ -42,14 +42,18 @@ class DeletedAllDialogSetting extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
+              child: Flex(
+                direction: Axis.horizontal,
                 children: [
-                  Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        'با حذف حساب کاربری تمام اطلاعات شما حذف و\n غیر قابل بازگردانی خواهد شد.',
-                        style: TextStyle(fontSize: 12),
-                      )),
+                  Expanded(
+                    flex: 1,
+                    child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          'با حذف حساب کاربری تمام اطلاعات شما حذف و غیر قابل بازگردانی خواهد شد.',
+                          style: TextStyle(fontSize: 12),
+                        )),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Icon(

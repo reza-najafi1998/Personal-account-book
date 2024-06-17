@@ -125,7 +125,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   child: TextField(
                     onChanged: (value) {
                       // print(value);
-                      if(value.isNotEmpty && value.substring(0,1)=='0'){
+                      if(value.isNotEmpty && value.substring(0,1)=='0' && value.length==1){
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Directionality(
                               textDirection: TextDirection.rtl,
@@ -134,7 +134,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       }
                     },
                     controller: _amountTxt,
-                    maxLength: 17,
+                    maxLength: 13,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     inputFormatters: [CustomAmountFormatter()],
@@ -191,18 +191,14 @@ class _AddTransactionState extends State<AddTransaction> {
                     if (widget.trx.isInBox) {
                       await widget.trx.save();
                     } else {
-                       widget.trx.date = g
+                       widget.trx.date = '${g
                           .toJalali()
-                          .year
-                          .toString() + '/' + g
+                          .year}/${g
                           .toJalali()
-                          .month
-                          .toString() + '/' + g
+                          .month}/${g
                           .toJalali()
-                          .day
-                          .toString();
-                      widget.trx.time = now.hour.toString() + ':' + now.minute
-                          .toString() + ':' + now.second.toString();
+                          .day}';
+                      widget.trx.time = '${now.hour}:${now.minute}:${now.second}';
                       await box.add(widget.trx);
 
 
@@ -210,10 +206,11 @@ class _AddTransactionState extends State<AddTransaction> {
                     Navigator.of(context).pop(true); // برگرد به صفحه قبلی با ارسال پارامتر
                     Navigator.of(context).pop(true); // برگرد به صفحه قبلی با ارسال پارامتر
                   }else{
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Directionality(
                           textDirection: TextDirection.rtl,
-                          child: Text('مقادیر خالی است')),
+                          child: Text('مبلغ حساب وارد نشده است')),
                     ));
                   }
                 },

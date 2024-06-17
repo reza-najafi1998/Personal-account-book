@@ -47,7 +47,8 @@ class _SettlementTrxState extends State<SettlementTrx> {
         children: [
           Directionality(
               textDirection: ui.TextDirection.rtl,
-              child: Text('شما در حال تسویه حساب «' + personName + '» هستید.')),
+              child: Text('شما در حال تسویه حساب «' + personName + '» هستید.',
+              textAlign: TextAlign.center,)),
           SizedBox(
             height: 8,
           ),
@@ -108,33 +109,14 @@ class _SettlementTrxState extends State<SettlementTrx> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Directionality(
-                                textDirection: ui.TextDirection.rtl,
-                                child: Text('مبلغ تسویه :',
-                                    style: themeData.textTheme.headline3!
-                                        .copyWith(
-                                            color: Colors.black, fontSize: 13)),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                    ],
-                  )
+                  Directionality(
+                    textDirection: ui.TextDirection.rtl,
+                    child: Text('  مبلغ تسویه :',
+                        style: themeData.textTheme.headline3!
+                            .copyWith(
+                                color: Colors.black, fontSize: 13)),
+                  ),
+                 // SizedBox(width: 8,)
                 ],
               ),
             ),
@@ -180,12 +162,12 @@ class _SettlementTrxState extends State<SettlementTrx> {
                   transactions.time = '${now.hour}:${now.minute}:${now.second}';
                   await box.add(transactions);
 
-                  print(transactions.id);
-                  print(transactions.description);
-                  print(transactions.price);
-                  print(transactions.status);
-                  print(transactions.date);
-                  print(transactions.time);
+                  // print(transactions.id);
+                  // print(transactions.description);
+                  // print(transactions.price);
+                  // print(transactions.status);
+                  // print(transactions.date);
+                  // print(transactions.time);
 
                   Navigator.pop(context,true);
                 },

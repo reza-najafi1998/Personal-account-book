@@ -55,7 +55,7 @@ class AccountsAdapter extends TypeAdapter<Accounts> {
     return Accounts()
       ..id = fields[0] as int
       ..name = fields[1] as String
-      ..phone = fields[2] as String;
+      ..phone = fields[2] == null ? '' : fields[2] as String;
   }
 
   @override
