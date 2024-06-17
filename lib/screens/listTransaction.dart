@@ -6,8 +6,11 @@ import 'package:payment/screens/addReminder.dart';
 import 'package:payment/screens/addTransaction.dart';
 import 'package:payment/data/data.dart';
 import 'package:payment/screens/home.dart';
+import 'package:payment/widgets/coachmarkDesc.dart';
 import 'package:payment/widgets/settlementListTransaction.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/editPersonNameDialogHome.dart';
@@ -23,6 +26,8 @@ class ListTransaction extends StatefulWidget {
 
 class _ListTransactionState extends State<ListTransaction>
     with SingleTickerProviderStateMixin {
+  late SharedPreferences _prefs;
+  bool _Coach = true;
   bool activearchiv = false;
 
   bool issort = true;
@@ -95,10 +100,76 @@ class _ListTransactionState extends State<ListTransaction>
   ValueNotifier<List<Transactions>> archivTrx =
       ValueNotifier<List<Transactions>>([]);
 
+  //coach---------------------
+  TutorialCoachMark? tutorialCoachMark;
+  List<TargetFocus> targets = [];
+
+  GlobalKey itemlistkey = GlobalKey();
+
+  void _showTutorialCoachmark() {
+    initTarget();
+    tutorialCoachMark = TutorialCoachMark(
+      targets: targets,
+      pulseEnable: false,
+      hideSkip: true,
+    )..show(context: context);
+  }
+
+  void initTarget() {
+    targets = [
+      TargetFocus(
+          identify: "itemlist-key",
+          keyTarget: itemlistkey,
+          shape: ShapeLightFocus.RRect,
+
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              builder: (context, controller) {
+                return CoachmarkDesc(
+                  text:
+                      'برای حذف یا ویرایش تراکنش روی ایتم لمس کنید و نگهدارید.',
+                  next: 'تمام',
+                  onSkip: () {
+                    controller.skip();
+                    _prefs.setBool('CoachListhesab', false);
+                  },
+                  onNext: () {
+                    controller.next();
+                    _prefs.setBool('CoachHome', false);
+                  },
+                );
+              },
+            )
+          ]),
+    ];
+  }
+
+  Future _loadSettings() async {
+
+      _prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _Coach = _prefs.getBool('CoachListhesab') ?? true;
+      });
+
+  }
+
   @override
   void initState() {
-    super.initState();
 
+
+    super.initState();
+    if(boxtrx.values.length>0){
+      Future.delayed(
+        Duration(seconds: 1),
+            () async {
+          if (_Coach) {
+
+            _showTutorialCoachmark();
+          }
+        },
+      );
+    }
     CheckTrx().then((results) {
       setState(() {
         activeTrx.value = results[0];
@@ -120,7 +191,12 @@ class _ListTransactionState extends State<ListTransaction>
 
   @override
   Widget build(BuildContext context) {
+    _loadSettings();
+
+
     final themeData = Theme.of(context);
+
+
 
     CheckTrx().then((results) {
       activeTrx.value = results[0];
@@ -134,7 +210,6 @@ class _ListTransactionState extends State<ListTransaction>
         onTap: () async {
           final transactions = Transactions();
           transactions.id = widget.id;
-          // print(transactions.id.toString());
           final result = await Navigator.of(context).push(CupertinoPageRoute(
             builder: (context) => AddTransaction(
               trx: transactions,
@@ -180,274 +255,340 @@ class _ListTransactionState extends State<ListTransaction>
               children: [
                 Container(
                   width: double.infinity,
-                  height: 120,
+                  height: 115,
                   decoration: BoxDecoration(
-                      color: themeData.colorScheme.onTertiary,
+                      color: Color(0xFF003B69),
                       //border: Border.all(color: themeData.colorScheme.secondary,width: 2),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 10)
+                          color: Color(0xFF003B69).withOpacity(0.6),
+                          blurRadius: 5,
+                        )
                       ]),
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    _makePhoneCall(
-                                      hesab.getphone(widget.id),
-                                    );
-                                  },
-                                  child: Container(
-                                    //margin: const EdgeInsets.all(8),
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        color: themeData.colorScheme.primary,
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(
-                                          Icons.call,
-                                          color: Colors.white,
-                                        )),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Container(
-                                  //margin: const EdgeInsets.all(8),
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color:
-                                          hesab.fullhesabperson(widget.id) >= 0
-                                              ? themeData
-                                                  .colorScheme.primaryContainer
-                                              : themeData.colorScheme.error,
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: hesab.fullhesabperson(widget.id) >= 0
-                                        ? Image.asset(
-                                            'assets/images/png/up.png')
-                                        : Image.asset(
-                                            'assets/images/png/down.png'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                        child: SizedBox(
+                          height: 45,
+                          child: Flex(
+                            direction: Axis.horizontal,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Row(
                                   children: [
-                                    SizedBox(
-                                      width: 200,
-                                      child: Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: Text(
-                                          overflow: TextOverflow.ellipsis,
-                                          hesab.getname(widget.id),
-                                          style: themeData.textTheme.subtitle1!
-                                              .copyWith(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 15),
-                                        ),
+                                    InkWell(
+                                      onTap: () {
+                                        String numberphone =
+                                            hesab.getphone(widget.id);
+                                        if (numberphone.isNotEmpty) {
+                                          _makePhoneCall(numberphone);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Directionality(
+                                                textDirection:
+                                                    TextDirection.rtl,
+                                                child: Text(
+                                                    'برای طرف حساب شماره تلفنی ثبت نشده است.')),
+                                          ));
+                                        }
+                                      },
+                                      child: Container(
+                                        //margin: const EdgeInsets.all(8),
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                themeData.colorScheme.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        child: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Icon(
+                                              Icons.call,
+                                              color: Colors.white,
+                                            )),
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 3,
+                                      width: 4,
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'تومان',
-                                          style: themeData.textTheme.headline3!
-                                              .copyWith(
-                                                  color: Colors.white,
-                                                  height: 0.4,
-                                                  fontWeight: FontWeight.w100,
-                                                  fontSize: 13),
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        Text(
-                                          replaceFarsiNumber(hesab
-                                              .fullhesabperson(widget.id)
-                                              .toString()
-                                              .seRagham()),
-                                          style: themeData.textTheme.subtitle1!
-                                              .copyWith(
-                                            fontSize: 12,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
+                                    Container(
+                                      //margin: const EdgeInsets.all(8),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: hesab.fullhesabperson(
+                                                      widget.id) >=
+                                                  0
+                                              ? themeData
+                                                  .colorScheme.primaryContainer
+                                              : themeData.colorScheme.error,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: hesab.fullhesabperson(
+                                                    widget.id) >=
+                                                0
+                                            ? Image.asset(
+                                                'assets/images/png/up.png')
+                                            : Image.asset(
+                                                'assets/images/png/down.png'),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  width: 8,
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Flex(
+                                  direction: Axis.horizontal,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Directionality(
+                                            textDirection: TextDirection.rtl,
+                                            child: Text(
+                                              textAlign: TextAlign.start,
+                                              overflow: TextOverflow.ellipsis,
+                                              hesab.getname(widget.id),
+                                              style: themeData
+                                                  .textTheme.subtitle1!
+                                                  .copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 15),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 3,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                'تومان',
+                                                style: themeData
+                                                    .textTheme.headline3!
+                                                    .copyWith(
+                                                        color: Colors.white,
+                                                        height: 0.4,
+                                                        fontWeight:
+                                                            FontWeight.w100,
+                                                        fontSize: 13),
+                                              ),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              Text(
+                                                replaceFarsiNumber(hesab
+                                                    .fullhesabperson(widget.id)
+                                                    .toString()
+                                                    .seRagham()),
+                                                style: themeData
+                                                    .textTheme.subtitle1!
+                                                    .copyWith(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Image.asset(
+                                        'assets/images/png/user.png',
+                                        //width: 40,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Image.asset(
-                                  'assets/images/png/user.png',
-                                  width: 50,
-                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                if (hesab.fullhesabperson(widget.id) != 0) {
+                                  bool x = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SettlementTrx(
+                                        id: widget.id,
+                                      );
+                                    },
+                                  );
 
-                              ],
+                                  if (x) {
+                                    setState(() {});
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child:
+                                            Text('مبلغی جهت تسویه وجود ندارد')),
+                                  ));
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: themeData.scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'تسویه حساب',
+                                        style: themeData.textTheme.subtitle1!
+                                            .copyWith(
+                                                fontSize: 12,
+                                                color: Color(0xFF003B69)),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Icon(
+                                        CupertinoIcons.archivebox_fill,
+                                        color: Color(0xFF003B69),
+                                        size: 17,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          AddReminder(id: widget.id),
+                                    ));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: themeData.scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'یاد آور',
+                                        style: themeData.textTheme.subtitle1!
+                                            .copyWith(
+                                                fontSize: 12,
+                                                color: Color(0xFF003B69)),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Icon(
+                                        Icons.alarm,
+                                        color: Color(0xFF003B69),
+                                        size: 17,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                final boxacc = Hive.box<Accounts>('Accounts');
+                                Accounts acc = boxacc.values
+                                    .toList()
+                                    .firstWhere(
+                                        (element) => element.id == widget.id);
+                                bool x = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return EditPersonNameDialogHome(
+                                      accitem: acc,
+                                    );
+                                  },
+                                );
+
+
+
+                                if (x) {
+                                  setState(() {});
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: themeData.scaffoldBackgroundColor,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: FittedBox(
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'ویرایش طرف حساب',
+                                            style: themeData
+                                                .textTheme.subtitle1!
+                                                .copyWith(
+                                                    fontSize: 12,
+                                                    color: Color(0xFF003B69)),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Icon(
+                                        Icons.edit,
+                                        color: Color(0xFF003B69),
+                                        size: 17,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              bool x = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SettlementTrx(
-                                    id: widget.id,
-                                  );
-                                },
-                              );
-
-                              if (x) {
-                                setState(() {});
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: themeData.scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      CupertinoIcons.archivebox_fill,
-                                      color: Colors.black.withOpacity(0.6),
-                                      size: 17,
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      'تسویه حساب',
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          // SizedBox(
-                          //   width: 6,
-                          // ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) =>
-                                        AddReminder(id: widget.id),
-                                  ));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: themeData.scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.alarm,
-                                      color: Colors.black.withOpacity(0.6),
-                                      size: 17,
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      'یاد آور',
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          // SizedBox(
-                          //   width: 6,
-                          // ),
-                          InkWell(
-                            onTap: () async {
-                              final boxacc = Hive.box<Accounts>('Accounts');
-                              Accounts acc = boxacc.values.toList().firstWhere(
-                                  (element) => element.id == widget.id);
-                              bool x = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return EditPersonNameDialogHome(
-                                    accitem: acc,
-                                  );
-                                },
-                              );
-
-                              print(x);
-
-                              if (x) {
-                                setState(() {});
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: themeData.scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(8, 12, 8, 12),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit,
-                                      color: Colors.black.withOpacity(0.6),
-                                      size: 17,
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      'ویرایش طرف حساب',
-                                      style: themeData.textTheme.subtitle1!
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
                       )
                     ],
                   ),
@@ -553,6 +694,7 @@ class _ListTransactionState extends State<ListTransaction>
                             refScreen: () {
                               setState(() {});
                             },
+                            itemlistkey: itemlistkey,
                           );
                         },
                       ),
@@ -662,6 +804,7 @@ class _ListTransactionState extends State<ListTransaction>
                                 refScreen: () {
                                   setState(() {});
                                 },
+                                itemlistkey: itemlistkey,
                               );
                             },
                           ),
@@ -689,12 +832,14 @@ class _ListBuilderAccounts extends StatefulWidget {
     required this.issort,
     required this.trxlist,
     required this.refScreen,
+    required this.itemlistkey,
   });
 
   final List<Transactions> trxlist;
   final ThemeData themeData;
   final bool issort;
   final Function refScreen;
+  final GlobalKey itemlistkey;
 
   @override
   State<_ListBuilderAccounts> createState() => _ListBuilderAccountsState();
@@ -713,12 +858,13 @@ class _ListBuilderAccountsState extends State<_ListBuilderAccounts> {
               // final Transactions data = widget.boxtrx.values.toList()[index];
               final Transactions data = widget.trxlist[index];
               return _ItemHesabList(
-                themeData: widget.themeData,
-                trxitem: data,
-                edit: () {
-                  widget.refScreen();
-                },
-              );
+                  itemlistkey: widget.itemlistkey,
+                  themeData: widget.themeData,
+                  trxitem: data,
+                  edit: () {
+                    widget.refScreen();
+                  },
+                  index: index);
             },
           )
         : Padding(
@@ -747,26 +893,33 @@ class _ListBuilderAccountsState extends State<_ListBuilderAccounts> {
 class _ItemHesabList extends StatelessWidget {
   final Transactions trxitem;
   final Function edit;
+  final GlobalKey itemlistkey;
+  final int index;
 
   const _ItemHesabList({
     required this.themeData,
     required this.trxitem,
     required this.edit,
+    required this.itemlistkey,
+    required this.index,
   });
 
   final ThemeData themeData;
 
   @override
   Widget build(BuildContext context) {
+
     return InkWell(
+
+      borderRadius: BorderRadius.circular(20),
       onLongPress: () async {
         final result = await editTrxDialog(context, trxitem, () {
-          print(1);
           edit();
         });
       },
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+        key: index == 0 ? itemlistkey : null,
+        padding: const EdgeInsets.all(4),
         child: Container(
           width: 360,
           height: trxitem.description.length > 0 ? 80 : 60,
@@ -881,6 +1034,9 @@ class _ItemHesabList extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        SizedBox(
+                          height: trxitem.description.length > 0 ? 0 : 4,
+                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

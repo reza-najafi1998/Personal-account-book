@@ -1,15 +1,14 @@
-import 'dart:math';
+
 
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:payment/data/data.dart';
+import 'package:payment/widgets/contactDialogAddPrson.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
-// import 'package:shamsi_date/shamsi_date.dart';
+
 
 import 'addTransaction.dart';
 import 'home.dart';
@@ -17,10 +16,11 @@ import 'home.dart';
 class AddPerson extends StatefulWidget {
   final String name;
   final String phone;
-  final bool fromContactPage;
 
-
-  const AddPerson({super.key, required this.name, required this.phone, required this.fromContactPage});
+  const AddPerson(
+      {super.key,
+      required this.name,
+      required this.phone});
 
   @override
   State<AddPerson> createState() => _AddPersonState();
@@ -32,19 +32,18 @@ class _AddPersonState extends State<AddPerson> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _amountTxt = TextEditingController();
   final TextEditingController _infoTxt = TextEditingController();
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-     _nameTxt.text=widget.name;
-     _phone.text = widget.phone;
-
-}
+    _nameTxt.text = widget.name;
+    _phone.text = widget.phone;
+  }
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-
 
     return Scaffold(
       body: SafeArea(
@@ -63,25 +62,79 @@ class _AddPersonState extends State<AddPerson> {
               const SizedBox(
                 height: 16,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    onTap: () {
-                      _nameTxt.selection = TextSelection.fromPosition(
-                          TextPosition(offset: _nameTxt.text.length));
-                    },
-                    controller: _nameTxt,
-                    maxLength: 30,
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.switch_account),
-                        label: const Text('نام طرف حساب'),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                      onTap: () async{
+                        Contact? cv =
+                        await showDialog<Contact>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ContactDialogAddPerson();
+                          },
+                        );
+                        if(cv!=null){
+                          setState(() {
+                            _nameTxt.text=cv.displayName;
+                            _phone.text=cv.phones.first.number;
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: themeData.colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.contact_mail_rounded,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(height: 3,),
+                                  Text(
+                                    'مخاطب',
+                                    style: themeData.textTheme.subtitle2!
+                                        .copyWith(fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      )),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: SizedBox(
+                          width: 200,
+                          child: TextField(
+                            onTap: () {
+                              _nameTxt.selection = TextSelection.fromPosition(
+                                  TextPosition(offset: _nameTxt.text.length));
+                            },
+                            controller: _nameTxt,
+                            maxLength: 30,
+                            textAlign: TextAlign.right,
+                            decoration: InputDecoration(
+                              counterText: '',
+                                prefixIcon: const Icon(Icons.switch_account),
+                                label: const Text('نام طرف حساب'),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20))),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -96,9 +149,10 @@ class _AddPersonState extends State<AddPerson> {
                     maxLength: 12,
                     //keyboardType: TextInputType.phone,
                     textAlign: TextAlign.right,
+                    keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.switch_account),
-                        label: const Text('شماره تلفن'),
+                        label: const Text('شماره تلفن (اختیاری)'),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20))),
                   ),
@@ -146,8 +200,11 @@ class _AddPersonState extends State<AddPerson> {
                   child: TextField(
                     onChanged: (value) {
                       // print(value);
-                      if(value.isNotEmpty && value.substring(0,1)=='0'){
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      if (value.isNotEmpty &&
+                          value.substring(0, 1) == '0' &&
+                          value.length == 1) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
                           content: Directionality(
                               textDirection: TextDirection.rtl,
                               child: Text('عدد صفر ابتدای مبلغ درج نخواهد شد')),
@@ -155,7 +212,7 @@ class _AddPersonState extends State<AddPerson> {
                       }
                     },
                     controller: _amountTxt,
-                    maxLength: 17,
+                    maxLength: 13,
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     inputFormatters: [CustomAmountFormatter()],
@@ -167,7 +224,6 @@ class _AddPersonState extends State<AddPerson> {
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                 child: Directionality(
@@ -191,11 +247,10 @@ class _AddPersonState extends State<AddPerson> {
                 ),
               ),
               InkWell(
-                onTap: () async{
+                onTap: () async {
                   if (_nameTxt.text.isNotEmpty && _amountTxt.text.isNotEmpty) {
-
-                    String outputString = _amountTxt.text.replaceAll(',', ''); // حذف تمام ویرگول‌ها
-
+                    String outputString = _amountTxt.text
+                        .replaceAll(',', ''); // حذف تمام ویرگول‌ها
 
                     final transactions = Transactions();
                     final accounts = Accounts();
@@ -209,7 +264,7 @@ class _AddPersonState extends State<AddPerson> {
                     }
                     bool isExistsphone = false;
                     for (var data in box.values) {
-                      if (data.phone == _phone.text && data.phone!='') {
+                      if (data.phone == _phone.text && data.phone != '') {
                         isExistsphone = true;
                       }
                     }
@@ -226,49 +281,46 @@ class _AddPersonState extends State<AddPerson> {
                             textDirection: TextDirection.rtl,
                             child: Text('شماره تلفن تکراری است')),
                       ));
-                    } else{
+                    } else {
                       showAlertDialog(context, 'لطفا صبر کنید');
 
                       var now = DateTime.now();
                       // var formatter = new intl.DateFormat('yyyy-MM-dd');
                       Gregorian g = Gregorian(now.year, now.month, now.day);
 
-                      String temptime = '${now.hour}:${now.minute}:${now.second}';
+                      String temptime =
+                          '${now.hour}:${now.minute}:${now.second}';
                       transactions.time = temptime;
 
                       //accounts.id = box.values.length + 1;
                       accounts.name = _nameTxt.text;
-                      accounts.phone = _phone.text.isNotEmpty?_phone.text:'';
+                      accounts.phone =
+                          _phone.text.isNotEmpty ? _phone.text : '';
 
                       final Box<Accounts> boxacc = Hive.box('Accounts');
                       await boxacc.add(accounts);
-                      accounts.id=boxacc.values.toList().firstWhere((element) => element.name==_nameTxt.text).id;
-
+                      accounts.id = boxacc.values
+                          .toList()
+                          .firstWhere(
+                              (element) => element.name == _nameTxt.text)
+                          .id;
 
                       transactions.id = accounts.id;
                       transactions.status = isswitch;
                       transactions.price = int.parse(outputString);
                       transactions.description =
-                      _infoTxt.text.isNotEmpty ? _infoTxt.text : '';
+                          _infoTxt.text.isNotEmpty ? _infoTxt.text : '';
 
-                      transactions.date = '${g.toJalali().year}/${g.toJalali().month}/${g.toJalali().day}';
+                      transactions.date =
+                          '${g.toJalali().year}/${g.toJalali().month}/${g.toJalali().day}';
                       transactions.time = temptime;
 
                       final Box<Transactions> boxtrx = Hive.box('transactions');
                       await boxtrx.add(transactions);
 
-                      if (widget.fromContactPage) {
                         Navigator.pop(context);
                         Navigator.pop(context);
-                      } else {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      }
 
-                      // Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                      //   builder: (context) => Home(),
-                      // ));
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:payment/screens/addPerson.dart';
 import 'package:payment/services/sortedList.dart';
+import 'package:payment/widgets/activeContactPageSetting-deactive.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 List<Contact> _contacts = [];
@@ -21,6 +22,7 @@ final ValueNotifier<String> searchKeywordNotifier = ValueNotifier('');
 class _ContactsState extends State<Contacts> {
   bool _isGranted = false;
   bool _isloading = true;
+  bool checkshowcontactpage = false;
 
   @override
   void initState() {
@@ -58,6 +60,8 @@ class _ContactsState extends State<Contacts> {
 
             String number = numberphones.number.replaceAll(' ', '');
             number = number.replaceAll('-', '');
+            number = number.replaceAll(')', '');
+            number = number.replaceAll('(', '');
             if (number.length == 13) {
               number = number.replaceAll('+98', '0');
             }
@@ -80,15 +84,14 @@ class _ContactsState extends State<Contacts> {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           Navigator.pushReplacement(
             context,
-            CupertinoPageRoute(builder: (context) => AddPerson(fromContactPage: true, name: '',phone: '',)),
+            CupertinoPageRoute(
+                builder: (context) => AddPerson(
+                      name: '',
+                      phone: '',
+                    )),
           );
         });
-        // Navigator.pushReplacement(
-        //     context,
-        //     CupertinoPageRoute(
-        //       builder: (context) =>
-        //           const AddPerson(name: '', phone: ''),
-        //     ));
+
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Directionality(
               textDirection: TextDirection.rtl,
@@ -118,7 +121,10 @@ class _ContactsState extends State<Contacts> {
       floatingActionButton: InkWell(
         onTap: () {
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
-            return const AddPerson(name: '', phone: '',fromContactPage: false,);
+            return const AddPerson(
+              name: '',
+              phone: '',
+            );
           }));
         },
         child: Container(
@@ -146,11 +152,13 @@ class _ContactsState extends State<Contacts> {
           ),
         ),
       ),
-      body: !_isGranted
+      body:
+
+      !_isGranted
           ? Center(
               child: Container(
                 width: 350,
-                height: 200,
+                height: 230,
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12)),
@@ -176,11 +184,34 @@ class _ContactsState extends State<Contacts> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          setState(() async{
+                          setState(() async {
                             _fetchContacts();
                           });
                         },
-                        child:  Text('درخواست مجدد مجوز',style: themeData.textTheme.subtitle2!.copyWith(fontSize: 14,fontWeight: FontWeight.w400),))
+                        child: Text(
+                          'درخواست مجدد مجوز',
+                          style: themeData.textTheme.subtitle2!.copyWith(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                        )),
+                    ElevatedButton(
+                        onPressed: () async{
+                          bool result= await
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ActiveContactPageSetting();
+                              },
+                            )??false;
+                          if(result){
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddPerson(name: '', phone: ''),));
+                          }
+                        },
+                        child: Text(
+                          'غیر فعال کردن صفحه مخاطبین',
+                          style: themeData.textTheme.subtitle2!.copyWith(
+                              fontSize: 14, fontWeight: FontWeight.w400),
+                        )),
+
                   ],
                 ),
               ),
@@ -228,6 +259,11 @@ class _ContactlistState extends State<Contactlist> {
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
+            child: SizedBox(
+              height: 10,
+            ),
+          ),
+          SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
               child: Container(
@@ -274,6 +310,11 @@ class _ContactlistState extends State<Contactlist> {
               ),
             ),
           ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 10,
+            ),
+          ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
                 (context, index) => Padding(
@@ -283,9 +324,9 @@ class _ContactlistState extends State<Contactlist> {
                           Navigator.push(context, CupertinoPageRoute(
                             builder: (context) {
                               return AddPerson(
-                                  name: datas[index].displayName,
-                                  phone: datas[index].phones[0].number,
-                              fromContactPage: false,);
+                                name: datas[index].displayName,
+                                phone: datas[index].phones[0].number,
+                              );
                             },
                           ));
                         },
@@ -295,40 +336,48 @@ class _ContactlistState extends State<Contactlist> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          child: Flex(
+                            direction: Axis.horizontal,
+                            //mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SizedBox(
-                                    width: 300,
-                                    child: Directionality(
-                                      textDirection: TextDirection.rtl,
-                                      child: Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        datas[index].displayName,
-                                        style: themeData.textTheme.subtitle1,
+                              Expanded(
+                                flex: 5,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 300,
+                                      child: Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child: Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          datas[index].displayName,
+                                          style: themeData.textTheme.subtitle1,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Text(
-                                    datas[index].phones.isNotEmpty
-                                        ? datas[index].phones[0].number
-                                        : '',
-                                    style: themeData.textTheme.subtitle1,
-                                  ),
-                                ],
+                                    Text(
+                                      datas[index].phones.isNotEmpty
+                                          ? datas[index].phones[0].number
+                                          : '',
+                                      style: themeData.textTheme.subtitle1,
+                                    ),
+                                  ],
+                                ),
                               ),
                               SizedBox(
                                 width: 8,
                               ),
-                              Image.asset(
-                                'assets/images/png/user.png',
-                                scale: 7,
+                              Expanded(
+                                flex: 1,
+                                child: Image.asset(
+                                  'assets/images/png/user.png',
+                                  scale: 7,
+                                ),
                               ),
                               SizedBox(
-                                width: 4,
+                                width: 8,
                               )
                             ],
                           ),

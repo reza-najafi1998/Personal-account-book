@@ -66,8 +66,8 @@ class _ReminderState extends State<Reminder> {
                 children: [
                   Text(
                     'لیست یادآور های در انتظار',
-                    style: themeData.textTheme.subtitle1!.copyWith(
-                        fontWeight: FontWeight.bold, fontSize: 15),
+                    style: themeData.textTheme.subtitle1!
+                        .copyWith(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   SizedBox(
                     width: 4,
@@ -204,153 +204,187 @@ class Itemlist extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         width: double.infinity,
-        height: 115,
+        height: bodyNotify!=''?125:115,
         decoration: BoxDecoration(
             color: themeData.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20)),
-        child: Row(
+        child: Flex(
+          direction: Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: () {
-                deletenotify(context, themeData, personid, titleNotify,notifydatetimemiladi,notifyTime);
-              },
-              child: Container(
-                width: 50,
-                //height:10,
-                decoration: BoxDecoration(
-                    color: themeData.colorScheme.error,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20))),
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.delete_solid,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      Text(
-                        'حذف',
-                        style: themeData.textTheme.headline3!
-                            .copyWith(color: Colors.white, fontSize: 14),
-                      )
-                    ],
+            Expanded(
+              flex: 1,
+              child: InkWell(
+                onTap: () {
+                  deletenotify(context, themeData, personid, titleNotify,
+                      notifydatetimemiladi, notifyTime);
+                },
+                child: Container(
+                  //width: 50,
+                  //height:10,
+                  decoration: BoxDecoration(
+                      color: themeData.colorScheme.error,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.delete_solid,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        Text(
+                          'حذف',
+                          style: themeData.textTheme.headline3!
+                              .copyWith(color: Colors.white, fontSize: 14),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 180
-                        ,child: Directionality(
-                        textDirection: TextDirection.rtl,
-                          child: Text(
-                            titleNotify,
-                            overflow: TextOverflow.ellipsis
-                            ,style: themeData.textTheme.subtitle1!
-                                .copyWith(fontSize: 15),
+            Expanded(
+              flex: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Flex(
+                      direction: Axis.horizontal,
+
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Text(
+                              maxLines: 1,
+                              textAlign: TextAlign.start,
+                              titleNotify,
+                              //overflow: TextOverflow.ellipsis,
+                              style: themeData.textTheme.subtitle1!.copyWith(
+                                fontSize: 15,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      Text(' : عنوان',
-                          style: themeData.textTheme.subtitle1!.copyWith(
-                              fontWeight: FontWeight.w600, fontSize: 15)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: themeData.colorScheme.secondary.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: SizedBox(
-                            width: 270,
-                            child: Text(
-                              bodyNotify != ''
-                                  ? 'توضیحات : ' + bodyNotify
-                                  : 'توضیحات : ندارد!',
-                              style: themeData.textTheme.subtitle1!.copyWith(
-                                  fontWeight: FontWeight.w400, fontSize: 12),
-                              maxLines: 4,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.justify,
-                            ),
-                          )),
+                        Text(' : عنوان',
+                            textAlign: TextAlign.end,
+                            style: themeData.textTheme.subtitle1!.copyWith(
+                                fontWeight: FontWeight.w600, fontSize: 15)),
+                        SizedBox(
+                          width: 8,
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    children: [
-                      Row(
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color:
+                              themeData.colorScheme.secondary.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: SizedBox(
+                              width: 270,
+                              child: Text(
+                                bodyNotify != ''
+                                    ? 'توضیحات : ' + bodyNotify
+                                    : 'توضیحات : ندارد!',
+                                style: themeData.textTheme.subtitle1!.copyWith(
+                                    fontWeight: FontWeight.w400, fontSize: 12),
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.justify,
+                              ),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                      child: Flex(
+                        direction: Axis.horizontal,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            notifydatetimemiladi.toPersianDate(),
-                            style: themeData.textTheme.subtitle1!
-                                .copyWith(fontSize: 11),
-                          ),
-                          Text(
-                            ' : تاریخ',
-                            style: themeData.textTheme.subtitle1!
-                                .copyWith(fontSize: 12),
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  notifydatetimemiladi.toPersianDate(),
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 11),
+                                ),
+                                Text(
+                                  ' : تاریخ',
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 12),
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Icon(
+                                  Icons.date_range_outlined,
+                                  size: 18,
+                                )
+                              ],
+                            ),
                           ),
                           SizedBox(
-                            width: 4,
+                            width: 16,
                           ),
-                          Icon(
-                            Icons.date_range_outlined,
-                            size: 18,
-                          )
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  fixmonthdate(notifyTime.hour.toString()) +
+                                      " : " +
+                                      fixmonthdate(notifyTime.minute.toString()),
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 12),
+                                ),
+                                Text(
+                                  ' : ساعت',
+                                  style: themeData.textTheme.subtitle1!
+                                      .copyWith(fontSize: 12),
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Icon(
+                                  Icons.access_time_outlined,
+                                  size: 18,
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            fixmonthdate(notifyTime.hour.toString()) +
-                                " : " +
-                                fixmonthdate(notifyTime.minute.toString()),
-                            style: themeData.textTheme.subtitle1!
-                                .copyWith(fontSize: 12),
-                          ),
-                          Text(
-                            ' : ساعت',
-                            style: themeData.textTheme.subtitle1!
-                                .copyWith(fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Icon(
-                            Icons.access_time_outlined,
-                            size: 18,
-                          )
-                        ],
-                      ),
-                    ],
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -359,8 +393,8 @@ class Itemlist extends StatelessWidget {
     );
   }
 
-  deletenotify(
-      BuildContext context, ThemeData themeData, int id, String title,DateTime datetime,TimeOfDay timeof) {
+  deletenotify(BuildContext context, ThemeData themeData, int id, String title,
+      DateTime datetime, TimeOfDay timeof) {
     AlertDialog alert = AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16))),
@@ -387,7 +421,6 @@ class Itemlist extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: Column(
                 children: [
-
                   Text(
                     'شما در حال حذف یادآور با مشخصات زیر هستید.',
                     style: themeData.textTheme.headline3!
@@ -395,13 +428,18 @@ class Itemlist extends StatelessWidget {
                   ),
                   Text(
                     ' عنوان : $title',
-                    style: themeData.textTheme.headline3!
-                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
+                    style: themeData.textTheme.headline3!.copyWith(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    ' زمان : '+fixmonthdate(timeof.hour.toString())+':'+fixmonthdate(timeof.minute.toString())+'  '+datetime.toPersianDate(),
-                    style: themeData.textTheme.headline3!
-                        .copyWith(fontSize: 15, color: Colors.black,fontWeight: FontWeight.bold),
+                    ' زمان : ${replaceFarsiNumber('${fixmonthdate(timeof.hour.toString())}:${fixmonthdate(timeof.minute.toString())}  ${datetime.toPersianDate()}')}'
+                        ,
+                    style: themeData.textTheme.headline3!.copyWith(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               )),

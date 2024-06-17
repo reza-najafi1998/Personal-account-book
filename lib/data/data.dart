@@ -15,14 +15,22 @@ class Accounts extends HiveObject {
   int id = 0;
   @HiveField(1)
   String name = '';
-  @HiveField(2)
+  @HiveField(2,defaultValue: '')
   String phone = '';
 
   static int _nextId = 1;
 
   Accounts() {
+    initializeNextId();
     this.id = _nextId; // مقداردهی خودکار id به مقدار nextId
     _nextId++; // افزایش مقدار nextId برای نمونه بعدی
+  }
+  void initializeNextId() async {
+    var box = await Hive.openBox<Accounts>('Accounts');
+    var accounts = box.values.toList();
+    if (accounts.isNotEmpty) {
+      _nextId = accounts.map((account) => account.id).reduce((a, b) => a > b ? a : b) + 1;
+    }
   }
 }
 
